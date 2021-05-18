@@ -1,8 +1,13 @@
 import React, { FC } from 'react'
-import {} from 'react-router-dom'
+import AuthContextWrapper from './components/authContextWrapper'
+import Navigation from './components/navigation'
 
 const App: FC = () => {
-    return <section>The App</section>
+    return (
+        <AuthContextWrapper>
+            <Navigation />
+        </AuthContextWrapper>
+    )
 }
 
 export default App
