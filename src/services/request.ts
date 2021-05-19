@@ -1,0 +1,36 @@
+import axios from 'axios'
+import { AuthData, LoginData, SignUpData } from '../lib/types'
+
+const baseUrl = 'http://localhost:8080'
+
+export async function loginService(
+    payload: LoginData
+): Promise<AuthData | null> {
+    try {
+        const { data } = await axios.post(`${baseUrl}/api/login`, payload)
+        if (data) {
+            console.log(data)
+            return data
+        }
+        return null
+    } catch (err) {
+        console.log(err)
+        return err
+    }
+}
+
+export async function SignUpService(
+    payload: SignUpData
+): Promise<AuthData | null> {
+    try {
+        const { data } = await axios.post(`${baseUrl}/api/user`, payload)
+        if (data) {
+            console.log(data)
+            return data
+        }
+        return null
+    } catch (err) {
+        console.log(err)
+        return err
+    }
+}

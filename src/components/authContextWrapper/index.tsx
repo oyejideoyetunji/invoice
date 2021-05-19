@@ -23,7 +23,7 @@ const AuthContextWrapper: FC<AuthContextWrapperProps> = (
     useEffect(() => {
         setAuthenticatedUser(getStoreData<AuthUser>(StoreKey.USER))
         setAuthToken(getStoreData<string>(StoreKey.TOKEN))
-    })
+    }, [])
 
     return (
         <AuthContext.Provider

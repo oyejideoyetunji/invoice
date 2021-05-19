@@ -20,3 +20,11 @@ export function setStoreData<T>(key: StoreKey, data: T): void {
         return
     }
 }
+
+export function removeStoreData(key: StoreKey): void {
+    try {
+        localStorage.removeItem(key)
+    } catch (_error) {
+        return
+    }
+}

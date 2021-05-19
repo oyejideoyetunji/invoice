@@ -25,8 +25,14 @@ const Header = styled.header`
         margin-left: 10px;
     }
 `
+export interface LandingPageTopBarProps {
+    onShowLoginModal(): void
+    onShowSignUpModal(): void
+}
 
-const LandingPageTopBar: FC = () => {
+const LandingPageTopBar: FC<LandingPageTopBarProps> = (
+    props: LandingPageTopBarProps
+) => {
     return (
         <Header className="flex items-center justify-between">
             <div>
@@ -55,8 +61,10 @@ const LandingPageTopBar: FC = () => {
             </div>
             <div>
                 {/* <Button size="small">Log out</Button> */}
-                <Button size="small">Log in</Button>
-                <Button primary size="small">
+                <Button onClick={props.onShowLoginModal} size="small">
+                    Log in
+                </Button>
+                <Button onClick={props.onShowSignUpModal} primary size="small">
                     Sign up
                 </Button>
             </div>
