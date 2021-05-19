@@ -1,7 +1,8 @@
+import React, { FC, ReactNode } from 'react'
 import styled from 'styled-components'
 import { Colour } from '../../lib/colour'
 
-export const ModalWrapper = styled.section`
+const Modal = styled.section`
     margin: 0;
     padding: 0;
     width: 100vw;
@@ -14,3 +15,19 @@ export const ModalWrapper = styled.section`
     justify-content: center;
     background: ${Colour.whiteModalBackground};
 `
+interface ModalWrapperProps {
+    onClose(): void
+    children: ReactNode
+}
+
+export const ModalWrapper: FC<ModalWrapperProps> = (
+    props: ModalWrapperProps
+) => {
+    return <Modal onClick={onModalClick}>{props.children}</Modal>
+
+    function onModalClick(event: React.MouseEvent<HTMLElement>) {
+        if (event.target === event.currentTarget) {
+            props.onClose()
+        }
+    }
+}

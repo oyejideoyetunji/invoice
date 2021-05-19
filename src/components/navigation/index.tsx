@@ -9,7 +9,7 @@ import { Routes } from './routes'
 const Navigation: FC = () => {
     const { user_data, token } = useContext(AuthContext)
 
-    if (!user_data || token) {
+    if (!user_data || !token) {
         return (
             <BrowserRouter>
                 <Switch>
@@ -22,11 +22,22 @@ const Navigation: FC = () => {
 
     return (
         <BrowserRouter>
-            <LayoutTopBar />
-            <Switch>
-                <Route exact path={Routes.Invoices} component={Invoices} />
-                <Redirect from={Routes.Home} to={Routes.Invoices} />
-            </Switch>
+            <Route
+                path={Routes.Home}
+                render={(props) => (
+                    <>
+                        <LayoutTopBar {...props} />
+                        <Switch>
+                            <Route
+                                exact
+                                path={Routes.Invoices}
+                                component={Invoices}
+                            />
+                            <Redirect from={Routes.Home} to={Routes.Invoices} />
+                        </Switch>
+                    </>
+                )}
+            />
         </BrowserRouter>
     )
 }

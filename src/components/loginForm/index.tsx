@@ -2,7 +2,6 @@ import React, { ChangeEvent, FC, FormEvent, useState } from 'react'
 import styled from 'styled-components'
 import Button from '../button'
 import { Input } from '../input'
-import { loginService } from '../../services/request'
 
 const StyledForm = styled.form`
     width: 30%;
@@ -16,7 +15,11 @@ const BrandWrapper = styled.section`
     margin: 18px 0;
 `
 
-const LoginForm: FC = () => {
+export interface LoginFormProps {
+    onLoginSubmit(data: { email: string; password: string }): void
+}
+
+const LoginForm: FC<LoginFormProps> = (props: LoginFormProps) => {
     const [email, setEmail] = useState('')
     const [passwordError, setPasswordError] = useState('')
     const [password, setPassword] = useState('')
@@ -66,7 +69,7 @@ const LoginForm: FC = () => {
             )
         } else {
             const payload = { email, password }
-            await loginService(payload)
+            props.onLoginSubmit(payload)
         }
     }
 }

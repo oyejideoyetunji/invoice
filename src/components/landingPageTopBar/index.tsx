@@ -27,6 +27,7 @@ const Header = styled.header`
 `
 export interface LandingPageTopBarProps {
     onShowLoginModal(): void
+    onShowSignUpModal(): void
 }
 
 const LandingPageTopBar: FC<LandingPageTopBarProps> = (
@@ -63,7 +64,7 @@ const LandingPageTopBar: FC<LandingPageTopBarProps> = (
                 <Button onClick={props.onShowLoginModal} size="small">
                     Log in
                 </Button>
-                <Button primary size="small">
+                <Button onClick={props.onShowSignUpModal} primary size="small">
                     Sign up
                 </Button>
             </div>
