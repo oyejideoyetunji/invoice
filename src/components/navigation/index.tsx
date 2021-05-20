@@ -2,9 +2,10 @@ import React, { FC, useContext } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import Invoices from '../../screens/invoices'
 import Landing from '../../screens/landing'
-import LayoutTopBar from '../layoutTopBar'
 import { AuthContext } from '../authContextWrapper/index'
 import { Routes } from './routes'
+import Layout from '../layout'
+import Invoice from '../../screens/invoice'
 
 const Navigation: FC = () => {
     const { user_data, token } = useContext(AuthContext)
@@ -25,17 +26,21 @@ const Navigation: FC = () => {
             <Route
                 path={Routes.Home}
                 render={(props) => (
-                    <>
-                        <LayoutTopBar {...props} />
+                    <Layout {...props}>
                         <Switch>
                             <Route
                                 exact
                                 path={Routes.Invoices}
                                 component={Invoices}
                             />
+                            <Route
+                                exact
+                                path={Routes.Invoice}
+                                component={Invoice}
+                            />
                             <Redirect from={Routes.Home} to={Routes.Invoices} />
                         </Switch>
-                    </>
+                    </Layout>
                 )}
             />
         </BrowserRouter>

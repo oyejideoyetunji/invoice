@@ -4,3 +4,7 @@ export enum Routes {
     Invoices = '/invoices',
     Invoice = '/invoice/:invoiceId',
 }
+
+export function getUrlString(url: string): string {
+    return url.split(':')[0]
+}
