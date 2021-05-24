@@ -8,12 +8,17 @@ const Modal = styled.section`
     width: 100vw;
     height: 100vh;
     position: fixed;
+    cursor: pointer;
     display: flex;
     top: 0;
     left: 0;
     align-items: center;
     justify-content: center;
     background: ${Colour.whiteModalBackground};
+
+    & > * {
+        cursor: default;
+    }
 `
 interface ModalWrapperProps {
     onClose(): void

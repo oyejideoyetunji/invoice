@@ -1,13 +1,24 @@
 import React, { ChangeEvent, FC, FormEvent, useState } from 'react'
 import styled from 'styled-components'
+import { Colour } from '../../lib/colour'
 import Button from '../button'
 import { Input } from '../input'
 
 const StyledForm = styled.form`
-    width: 30%;
-    height: 350px;
+    width: 80%;
+    height: 500px;
     margin: 0;
-    padding: 0;
+    padding: 16px;
+    border-radius: 16px;
+    background-color: ${Colour.primaryText};
+
+    @media only screen and (min-width: 767px) {
+        width: 50%;
+    }
+
+    @media only screen and (min-width: 1020px) {
+        width: 30%;
+    }
 `
 const BrandWrapper = styled.section`
     width: 100%;
@@ -46,7 +57,7 @@ const LoginForm: FC<LoginFormProps> = (props: LoginFormProps) => {
                 onChange={onPasswordChange}
                 required
             />
-            <div className="w-full flex py-4 justify-end">
+            <div className="w-full flex py-8 justify-end">
                 <Button size="medium" primary type="submit">
                     Login
                 </Button>

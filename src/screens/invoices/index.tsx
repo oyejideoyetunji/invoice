@@ -10,34 +10,49 @@ import { ModalWrapper } from '../../components/modalWrapper'
 import InvoiceForm from '../../components/invoiceForm'
 
 const Wrapper = styled.section`
-    margin: 32px 0;
-    padding: 24px 16px;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    color: ${Colour.darkBlueAlt};
+    background-color: ${Colour.whiteSmoke};
 `
 
 const TopBar = styled.section`
-    width: 70%;
+    width: calc(100% - 151.5px);
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    top: 0;
+    right: 0;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    background-color: ${Colour.white};
+
+    & > div {
+        width: 70%;
+        height: 100px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 `
 
 const InvoiceListWrapper = styled.section`
-    margin: 24px 0;
+    margin-top: 100px;
+    padding: 32px 0;
     width: 70%;
 `
 
 const InvoiceCardWrapper = styled.div`
     width: 100%;
-    margin: 8px 0;
-    padding: 12px 18px;
+    margin: 18px 0;
+    padding: 24px 16px;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
     border-radius: 12px;
-    box-shadow: 2px 2px 4px ${Colour.lightGray};
+    box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.1);
 `
 
 const FormWrapper = styled.section`
@@ -57,40 +72,46 @@ const Invoices: FC = () => {
         <>
             <Wrapper className="w-full">
                 <TopBar>
-                    <div className="flex flex-col">
-                        <h2>Invoices</h2>
-                        <span>There are 7 total invoices</span>
-                    </div>
-                    <div className="flex items-center">
-                        <Button onClick={onShowInvoiceForm} primary>
-                            New Invoice
-                        </Button>
+                    <div>
+                        <div className="flex flex-col">
+                            <h1 className="text-3xl md:text-4xl leading-snug md:leading-normal">
+                                Invoices
+                            </h1>
+                            <span>There are 7 total invoices</span>
+                        </div>
+                        <div className="flex items-center">
+                            <Button onClick={onShowInvoiceForm} primary>
+                                New Invoice
+                            </Button>
+                        </div>
                     </div>
                 </TopBar>
 
                 <InvoiceListWrapper>
-                    {['1', '2', '3', '4'].map((itm) => (
-                        <InvoiceCardWrapper key={itm}>
-                            <span>#XARTG012</span>
-                            <span>Due 19 Aug 2021</span>
-                            <span>Alex Grim</span>
-                            <span>NGN5236</span>
-                            <div>
-                                <span>Paid</span>
-                                <span className="px-4 cursor-pointer">
-                                    <Link
-                                        to={`${getUrlString(
-                                            Routes.Invoice
-                                        )}XARTG012`}
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faChevronRight}
-                                        />
-                                    </Link>
-                                </span>
-                            </div>
-                        </InvoiceCardWrapper>
-                    ))}
+                    {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(
+                        (itm) => (
+                            <InvoiceCardWrapper key={itm}>
+                                <span>#XARTG012</span>
+                                <span>Due 19 Aug 2021</span>
+                                <span>Alex Grim</span>
+                                <span>NGN5236</span>
+                                <div>
+                                    <span>Paid</span>
+                                    <span className="px-4 cursor-pointer">
+                                        <Link
+                                            to={`${getUrlString(
+                                                Routes.Invoice
+                                            )}XARTG012`}
+                                        >
+                                            <FontAwesomeIcon
+                                                icon={faChevronRight}
+                                            />
+                                        </Link>
+                                    </span>
+                                </div>
+                            </InvoiceCardWrapper>
+                        )
+                    )}
                 </InvoiceListWrapper>
             </Wrapper>
             {showInvoiceForm && (

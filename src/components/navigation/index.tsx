@@ -10,18 +10,14 @@ import Invoice from '../../screens/invoice'
 const Navigation: FC = () => {
     const { user_data, token } = useContext(AuthContext)
 
-    if (!user_data || !token) {
-        return (
-            <BrowserRouter>
-                <Switch>
-                    <Route exact path={Routes.Landing} component={Landing} />
-                    <Redirect from={Routes.Home} to={Routes.Landing} />
-                </Switch>
-            </BrowserRouter>
-        )
-    }
-
-    return (
+    return !user_data || !token ? (
+        <BrowserRouter>
+            <Switch>
+                <Route exact path={Routes.Landing} component={Landing} />
+                <Redirect from={Routes.Home} to={Routes.Landing} />
+            </Switch>
+        </BrowserRouter>
+    ) : (
         <BrowserRouter>
             <Route
                 path={Routes.Home}
