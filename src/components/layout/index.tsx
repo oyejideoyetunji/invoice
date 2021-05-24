@@ -14,20 +14,21 @@ const Wrapper = styled.main`
 const SideBar = styled.section`
     width: 150px;
     height: 100vh;
+    padding-top: 100px;
     display: flex;
     flex-direction: column;
     position: fixed;
     top: 0;
     left: 0;
-    background-color: ${Colour.elementsBackground};
-    color: ${Colour.primaryText};
+    background-color: ${Colour.white};
+    color: ${Colour.darkBlue};
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
 `
 const SideBarItem = styled.div`
     width: 100%;
-    padding: 14px 8px;
+    padding: 14px 18px;
     display: flex;
     align-items: center;
-    justify-content: center;
 
     & * {
         text-decoration: none;
@@ -41,7 +42,7 @@ const LogoutButtonWrapper = styled.div`
     left: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
+    padding: 14px 18px;
 `
 const Container = styled.section`
     width: calc(100% - 150px);

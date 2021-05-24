@@ -1,11 +1,13 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
+import { Colour } from '../../lib/colour'
 import Button from '../button'
 
 const Header = styled.header`
+    height: 85px;
     font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 15px 20px;
+    background-color: ${Colour.primaryText};
 
     & svg {
         display: inline-block;
@@ -16,13 +18,17 @@ const Header = styled.header`
         font-weight: 900;
         font-size: 20px;
         line-height: 1;
-        margin: 6px 0 6px 10px;
+        margin: 0 5px;
         display: inline-block;
         vertical-align: top;
     }
 
     & button + button {
         margin-left: 10px;
+    }
+
+    @media only screen and (min-width: 640px) {
+        height: 60px;
     }
 `
 export interface LandingPageTopBarProps {
@@ -34,8 +40,8 @@ const LandingPageTopBar: FC<LandingPageTopBarProps> = (
     props: LandingPageTopBarProps
 ) => {
     return (
-        <Header className="flex items-center justify-between">
-            <div>
+        <Header className="flex flex-col sm:flex-row sm:items-center justify-between px-4 md:px-8 lg:px-20">
+            <div className="pt-2 sm:py-3 flex items-center">
                 <svg
                     width="32"
                     height="32"
@@ -59,8 +65,7 @@ const LandingPageTopBar: FC<LandingPageTopBarProps> = (
                 </svg>
                 <h1>Invoice</h1>
             </div>
-            <div>
-                {/* <Button size="small">Log out</Button> */}
+            <div className="pb-2 sm:py-3 flex justify-end">
                 <Button onClick={props.onShowLoginModal} size="small">
                     Log in
                 </Button>
