@@ -1,7 +1,4 @@
-export enum StoreKey {
-    USER = 'current_user',
-    TOKEN = 'token',
-}
+import { StoreKey } from '../lib/types'
 
 export function getStoreData<T>(key: StoreKey): T | null {
     try {

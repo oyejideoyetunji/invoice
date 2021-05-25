@@ -1,61 +1,84 @@
 import React, { FC, ReactNode } from 'react'
 import styled from 'styled-components'
 import { RouteComponentProps } from 'react-router'
-import { removeStoreData, StoreKey } from '../../store/user'
+import { removeStoreData } from '../../store'
 import Button from '../button'
-import { Colour } from '../../lib/colour'
+// import { Colour } from '../../lib/colour'
+import { StoreKey } from '../../lib/types'
 
 const Wrapper = styled.main`
     display: flex;
+    flex-direction: column;
     margin: 0;
     padding: 0;
 `
 
-const SideBar = styled.section`
-    width: 150px;
-    height: 100vh;
-    padding-top: 100px;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: ${Colour.white};
-    color: ${Colour.darkBlue};
-    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
-`
-const SideBarItem = styled.div`
+const LayoutBar = styled.div`
     width: 100%;
-    padding: 14px 18px;
+    height: 50px;
+    padding: 0 8px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
 
-    & * {
-        text-decoration: none;
+    @media only screen and (min-width: 1024px) {
+        width: 100px;
+        height: 100vh;
+        padding: 32px 8px;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
     }
 `
 
+// const SideBar = styled.section`
+//     width: 150px;
+//     height: 100vh;
+//     padding-top: 100px;
+//     display: flex;
+//     flex-direction: column;
+//     position: fixed;
+//     top: 0;
+//     left: 0;
+//     background-color: ${Colour.white};
+//     color: ${Colour.darkBlue};
+//     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+// `
+// const SideBarItem = styled.div`
+//     width: 100%;
+//     padding: 14px 18px;
+//     display: flex;
+//     align-items: center;
+
+//     & * {
+//         text-decoration: none;
+//     }
+// `
+
 const LogoutButtonWrapper = styled.div`
-    width: 100%;
-    position: absolute;
-    bottom: 50px;
-    left: 0;
-    display: flex;
-    align-items: center;
-    padding: 14px 18px;
+    width: fit-content;
+    height: fit-content;
 `
 const Container = styled.section`
-    width: calc(100% - 150px);
-    margin-left: 150px;
+    width: 100%;
+
+    @media only screen and (min-width: 1024px) {
+        width: calc(100% - 103px);
+        margin-left: 103px;
+    }
 `
 
-const SideBarContents = [
-    {
-        name: 'Profile',
-        path: '/',
-        icon: '',
-    },
-]
+// const SideBarContents = [
+//     {
+//         name: 'Profile',
+//         path: '/',
+//         icon: '',
+//     },
+// ]
 
 export interface LayoutProps {
     children: ReactNode
@@ -66,18 +89,37 @@ const Layout: FC<LayoutProps & RouteComponentProps> = (
 ) => {
     return (
         <Wrapper className="w-full">
-            <SideBar>
-                {SideBarContents.map((content) => (
-                    <SideBarItem key={content.name}>
-                        <span>{content.name}</span>
-                    </SideBarItem>
-                ))}
+            <LayoutBar>
+                <div className="flex items-center">
+                    <svg
+                        width="32"
+                        height="32"
+                        viewBox="0 0 32 32"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <g fill="none" fillRule="evenodd">
+                            <path
+                                d="M10 0h12a10 10 0 0110 10v12a10 10 0 01-10 10H10A10 10 0 010 22V10A10 10 0 0110 0z"
+                                fill="#FFF"
+                            />
+                            <path
+                                d="M5.3 10.6l10.4 6v11.1l-10.4-6v-11zm11.4-6.2l9.7 5.5-9.7 5.6V4.4z"
+                                fill="#555AB9"
+                            />
+                            <path
+                                d="M27.2 10.6v11.2l-10.5 6V16.5l10.5-6zM15.7 4.4v11L6 10l9.7-5.5z"
+                                fill="#91BAF8"
+                            />
+                        </g>
+                    </svg>
+                    <h1>Invoice</h1>
+                </div>
                 <LogoutButtonWrapper>
-                    <Button onClick={onSignOut} primary size="medium">
+                    <Button onClick={onSignOut} primary size="small">
                         Sign out
                     </Button>
                 </LogoutButtonWrapper>
-            </SideBar>
+            </LayoutBar>
             <Container>{props.children}</Container>
         </Wrapper>
     )

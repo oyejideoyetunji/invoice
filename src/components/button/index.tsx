@@ -1,6 +1,8 @@
 import styled from 'styled-components'
+import { Colour } from '../../lib/colour'
 
 export interface ButtonProps {
+    color?: string
     primary?: boolean
     backgroundColor?: string
     size?: 'small' | 'medium' | 'large'
@@ -19,15 +21,19 @@ const Button = styled.button<ButtonProps>`
     outline: none;
     border-radius: 3em;
     cursor: pointer;
-    display: inline-block;
     line-height: 1;
 
-    ${({ primary }) =>
+    ${({ primary, color }) =>
         primary
             ? `
-                color: white;
+                color: ${Colour.white};
                 background-color: #1ea7fd;
         `
+            : color
+            ? `
+                color: ${Colour.white};
+                background-color: ${color};
+            `
             : `
                 color: #333;
                 background-color: transparent;

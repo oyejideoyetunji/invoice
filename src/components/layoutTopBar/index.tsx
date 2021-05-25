@@ -2,7 +2,8 @@ import React, { FC } from 'react'
 import { RouteComponentProps } from 'react-router'
 import styled from 'styled-components'
 import { Colour } from '../../lib/colour'
-import { removeStoreData, StoreKey } from '../../store/user'
+import { StoreKey } from '../../lib/types'
+import { removeStoreData } from '../../store'
 import Button from '../button'
 
 const Wrapper = styled.div`

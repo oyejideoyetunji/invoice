@@ -1,6 +1,6 @@
 import React, { createContext, FC, ReactNode, useEffect, useState } from 'react'
-import { AuthData, AuthUser } from '../../lib/types'
-import { getStoreData, StoreKey } from '../../store/user'
+import { AuthData, AuthUser, StoreKey } from '../../lib/types'
+import { getStoreData } from '../../store'
 
 export const defaultAuthData: AuthData = {
     user_data: null,
