@@ -21,3 +21,9 @@ export interface LoginData {
     email: string
     password: string
 }
+
+export enum StoreKey {
+    USER = 'current_user',
+    TOKEN = 'token',
+    Theme = 'theme',
+}
