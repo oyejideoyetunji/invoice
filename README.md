@@ -1,6 +1,6 @@
 # Easy to use yet powerful invoice app
 
-This project is built with [Vibes and Passion for creativity].
+This project is being built with Vibes and Passion for creativity.
 
 ## Technology Stack
 
