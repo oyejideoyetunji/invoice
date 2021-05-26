@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Button from '../../components/button'
 import { Colour } from '../../lib/colour'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { faChevronRight, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import { getUrlString, Routes } from '../../components/navigation/routes'
 import { ModalWrapper } from '../../components/modalWrapper'
@@ -30,7 +30,6 @@ const TopBar = styled.section`
     position: -webkit-sticky;
     position: sticky;
     top: 0;
-    z-index: 10;
     display: flex;
     justify-content: center;
 
@@ -144,13 +143,15 @@ const InvoiceCardWrapper = styled.div`
 `
 
 const FormWrapper = styled.section`
-    width: 40%;
     height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
     overflow-y: auto;
     background-color: ${Colour.elementsBackground};
+`
+const CloseModalButtonWrapper = styled.span`
+    width: fit-content;
+    height: fit-content;
+    padding: 4px;
+    cursor: pointer;
 `
 
 const Invoices: FC = () => {
@@ -228,9 +229,20 @@ const Invoices: FC = () => {
                 </InvoiceListWrapper>
             </Wrapper>
             {showInvoiceForm && (
-                <ModalWrapper onClose={onCloseInvoiceForm}>
-                    <FormWrapper>
-                        <InvoiceForm />
+                <ModalWrapper
+                    contentPosition="left"
+                    onClose={onCloseInvoiceForm}
+                >
+                    <FormWrapper className="w-full sm:w-11/12 md:w-4/5 lg:w-4/6 xl:w-2/5">
+                        <div className="w-full flex justify-end px-4">
+                            <CloseModalButtonWrapper
+                                onClick={onCloseInvoiceForm}
+                                className="text-lg md:text-xl"
+                            >
+                                <FontAwesomeIcon icon={faTimes} />
+                            </CloseModalButtonWrapper>
+                        </div>
+                        <InvoiceForm action="New" />
                     </FormWrapper>
                 </ModalWrapper>
             )}

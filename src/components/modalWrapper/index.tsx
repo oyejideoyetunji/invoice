@@ -2,7 +2,9 @@ import React, { FC, ReactNode } from 'react'
 import styled from 'styled-components'
 import { Colour } from '../../lib/colour'
 
-const Modal = styled.section`
+const Modal = styled.section<{
+    contentPosition?: 'left' | 'right' | 'center'
+}>`
     margin: 0;
     padding: 0;
     width: 100vw;
@@ -16,6 +18,21 @@ const Modal = styled.section`
     justify-content: center;
     background: ${Colour.whiteModalBackground};
 
+    ${({ contentPosition }) =>
+        contentPosition === 'left'
+            ? `
+        align-items: flex-start;
+        justify-content: flex-start;
+    `
+            : contentPosition === 'right'
+            ? `   align-items: flex-start;
+        justify-content: flex-end;
+    `
+            : `
+        align-items: center;
+        justify-content: center;
+    `}
+
     & > * {
         cursor: default;
     }
@@ -23,12 +40,17 @@ const Modal = styled.section`
 interface ModalWrapperProps {
     onClose(): void
     children: ReactNode
+    contentPosition?: 'left' | 'right' | 'center'
 }
 
 export const ModalWrapper: FC<ModalWrapperProps> = (
     props: ModalWrapperProps
 ) => {
-    return <Modal onClick={onModalClick}>{props.children}</Modal>
+    return (
+        <Modal contentPosition={props.contentPosition} onClick={onModalClick}>
+            {props.children}
+        </Modal>
+    )
 
     function onModalClick(event: React.MouseEvent<HTMLElement>) {
         if (event.target === event.currentTarget) {

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { AuthData, LoginData, SignUpData } from '../lib/types'
 
-const baseUrl = 'http://localhost:8080'
+const baseUrl = 'https://sthackup-invoice-service.herokuapp.com'
 
 export async function loginService(
     payload: LoginData
