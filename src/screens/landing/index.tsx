@@ -35,7 +35,7 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
             <Container className="w-full flex justify-center md:justify-between px-8 lg:px-20">
                 <div className="col col-el-1 py-4 flex flex-col w-4/5 md:w-1/2 lg:w-1/3 mt-8">
                     <h1 className="text-4xl md:text-5xl font-bold leading-snug md:leading-normal">
-                        Invoice Software that is easy and free
+                        Invoice Software that is simple and free
                     </h1>
                     <span className="py-4">
                         Explore a better way to do bussiness, it&#39;s simple
