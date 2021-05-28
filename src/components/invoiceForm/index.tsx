@@ -5,7 +5,7 @@ import { Colour } from '../../lib/colour'
 const StyledForm = styled.form`
     width: 100%;
     height: fit-content;
-    color: ${Colour.white};
+    color: ${Colour.darkBlue};
 `
 export interface InvoiceFormProps {
     action: 'New' | 'Edit'

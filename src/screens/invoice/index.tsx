@@ -54,7 +54,7 @@ const MobileActionBar = styled.section`
     background-color: ${Colour.white};
 `
 const BalanceSheet = styled.div`
-    background-color: ${Colour.lightGray};
+    background-color: ${Colour.whiteSmoke};
     border-radius: 12px;
 `
 const SumtotalWrapper = styled.div`

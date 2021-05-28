@@ -57,12 +57,18 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
             </Container>
             {showLogin && (
                 <ModalWrapper onClose={onCloseLoginModal}>
-                    <LoginForm onLoginSubmit={onLoginSubmit} />
+                    <LoginForm
+                        onCloseModal={onCloseLoginModal}
+                        onLoginSubmit={onLoginSubmit}
+                    />
                 </ModalWrapper>
             )}
             {showSignUp && (
                 <ModalWrapper onClose={onCloseSignUpModal}>
-                    <SignUpForm onSignUpSubmit={onSignUpSubmit} />
+                    <SignUpForm
+                        onCloseModal={onCloseSignUpModal}
+                        onSignUpSubmit={onSignUpSubmit}
+                    />
                 </ModalWrapper>
             )}
         </>

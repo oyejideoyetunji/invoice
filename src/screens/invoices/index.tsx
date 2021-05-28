@@ -81,7 +81,7 @@ const InvoiceCardWrapper = styled.div`
         'amount status';
     border-radius: 12px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    // box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.1);
+    background-color: ${Colour.white};
 
     & > * {
         display: flex;
@@ -145,7 +145,7 @@ const InvoiceCardWrapper = styled.div`
 const FormWrapper = styled.section`
     height: 100vh;
     overflow-y: auto;
-    background-color: ${Colour.elementsBackground};
+    background-color: ${Colour.white};
 `
 const CloseModalButtonWrapper = styled.span`
     width: fit-content;

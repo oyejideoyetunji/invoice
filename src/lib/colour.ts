@@ -8,5 +8,6 @@ export enum Colour {
     lightGray = '#e6e3e3',
     danger = '#fd8a8a',
     whiteModalBackground = 'rgba(225, 225, 225, 0.4)',
-    whiteSmoke = '#ffffef',
+    whiteSmoke = '#f1f4fa',
+    whiteSmokeAlt = '#ffffef',
 }
