@@ -8,6 +8,7 @@ export interface AuthUser {
 export interface AuthData {
     token: string | null
     user_data: AuthUser | null
+    message?: string
 }
 
 export interface SignUpData {

@@ -4,7 +4,7 @@ import { Colour } from '../../lib/colour'
 import Button from '../button'
 import { Input } from '../input'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 const StyledForm = styled.form`
     width: 80%;
@@ -25,7 +25,7 @@ const StyledForm = styled.form`
 `
 const BrandWrapper = styled.section`
     width: 100%;
-    height: 35%;
+    height: 50px;
     margin: 12px 0;
 `
 const CloseModalButtonWrapper = styled.span`
@@ -34,8 +34,14 @@ const CloseModalButtonWrapper = styled.span`
     padding: 4px;
     cursor: pointer;
 `
+const ErrorWrapper = styled.div`
+    font-size: 14px;
+    color: ${Colour.danger};
+`
 
 export interface LoginFormProps {
+    error: string
+    loading: boolean
     onCloseModal?(): void
     onLoginSubmit(data: { email: string; password: string }): void
 }
@@ -58,6 +64,9 @@ const LoginForm: FC<LoginFormProps> = (props: LoginFormProps) => {
             <BrandWrapper className="flex items-center justify-center">
                 Brand Here
             </BrandWrapper>
+            <ErrorWrapper className="px-1 py-2 text-center">
+                {props.error}
+            </ErrorWrapper>
             <Input
                 type="email"
                 label="Email address"
@@ -78,6 +87,14 @@ const LoginForm: FC<LoginFormProps> = (props: LoginFormProps) => {
             />
             <div className="w-full flex py-8 justify-end">
                 <Button size="medium" primary type="submit">
+                    {props.loading && (
+                        <span className="px-2">
+                            <FontAwesomeIcon
+                                icon={faSpinner}
+                                className="fa-spin"
+                            />
+                        </span>
+                    )}
                     Login
                 </Button>
             </div>

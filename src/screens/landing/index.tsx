@@ -16,6 +16,10 @@ import Innovation from '../../assets/images/innovation.svg'
 const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     const [showLogin, setShowLogin] = useState<boolean>(false)
     const [showSignUp, setShowSignUp] = useState<boolean>(false)
+    const [loginLoading, setLoginLoading] = useState<boolean>(false)
+    const [signUpLoading, setSignUpLoading] = useState<boolean>(false)
+    const [loginError, setLoginError] = useState<string>('')
+    const [signUpError, setSignUpError] = useState<string>('')
 
     const Container = styled.section`
         background-color: ${Colour.whiteSmoke};
@@ -58,6 +62,8 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
             {showLogin && (
                 <ModalWrapper onClose={onCloseLoginModal}>
                     <LoginForm
+                        error={loginError}
+                        loading={loginLoading}
                         onCloseModal={onCloseLoginModal}
                         onLoginSubmit={onLoginSubmit}
                     />
@@ -66,6 +72,8 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
             {showSignUp && (
                 <ModalWrapper onClose={onCloseSignUpModal}>
                     <SignUpForm
+                        error={signUpError}
+                        loading={signUpLoading}
                         onCloseModal={onCloseSignUpModal}
                         onSignUpSubmit={onSignUpSubmit}
                     />
@@ -76,12 +84,14 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
 
     function onCloseLoginModal() {
         setShowLogin(false)
+        setLoginError('')
     }
     function onShowLoginModal() {
         setShowLogin(true)
     }
 
     function onCloseSignUpModal() {
+        setSignUpError('')
         setShowSignUp(false)
     }
     function onShowSignUpModal() {
@@ -89,22 +99,38 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     }
 
     async function onLoginSubmit(data: LoginData) {
+        setLoginError('')
+        setLoginLoading(true)
         const authData = await loginService(data)
-        if (authData) {
+        if (authData && authData?.user_data && authData?.token) {
+            setLoginLoading(false)
             setStoreData(StoreKey.USER, authData?.user_data)
             setStoreData(StoreKey.TOKEN, authData?.token)
 
             props.history.go(0)
+        } else {
+            setLoginLoading(false)
+            if (authData.message) {
+                setLoginError(authData.message.split(':')[1])
+            }
         }
     }
 
     async function onSignUpSubmit(data: SignUpData) {
+        setSignUpError('')
+        setSignUpLoading(true)
         const authData = await SignUpService(data)
-        if (authData) {
+        if (authData && authData?.user_data && authData?.token) {
+            setSignUpLoading(false)
             setStoreData(StoreKey.USER, authData?.user_data)
             setStoreData(StoreKey.TOKEN, authData?.token)
 
             props.history.go(0)
+        } else {
+            setSignUpLoading(false)
+            if (authData.message) {
+                setSignUpError(authData.message.split(':')[1])
+            }
         }
     }
 }

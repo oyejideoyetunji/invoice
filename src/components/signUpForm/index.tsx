@@ -5,11 +5,11 @@ import { SignUpData } from '../../lib/types'
 import Button from '../button'
 import { Input } from '../input'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 const StyledForm = styled.form`
     width: 80%;
-    height: 520px;
+    height: 550px;
     margin: 0;
     padding: 16px;
     border-radius: 16px;
@@ -26,7 +26,7 @@ const StyledForm = styled.form`
 `
 const BrandWrapper = styled.section`
     width: 100%;
-    height: 50px;
+    height: 30px;
     margin: 12px 0;
 `
 const CloseModalButtonWrapper = styled.span`
@@ -35,8 +35,14 @@ const CloseModalButtonWrapper = styled.span`
     padding: 4px;
     cursor: pointer;
 `
+const ErrorWrapper = styled.div`
+    font-size: 14px;
+    color: ${Colour.danger};
+`
 
 export interface SignUpFormProps {
+    error: string
+    loading: boolean
     onCloseModal?(): void
     onSignUpSubmit(data: SignUpData): void
 }
@@ -61,6 +67,9 @@ const SignUpForm: FC<SignUpFormProps> = (props: SignUpFormProps) => {
             <BrandWrapper className="flex items-center justify-center">
                 Brand Here
             </BrandWrapper>
+            <ErrorWrapper className="px-1 py-2 text-center">
+                {props.error}
+            </ErrorWrapper>
             <Input
                 type="text"
                 label="First Name"
@@ -99,6 +108,14 @@ const SignUpForm: FC<SignUpFormProps> = (props: SignUpFormProps) => {
             />
             <div className="w-full flex py-4 justify-end">
                 <Button size="medium" primary type="submit">
+                    {props.loading && (
+                        <span className="px-2">
+                            <FontAwesomeIcon
+                                icon={faSpinner}
+                                className="fa-spin"
+                            />
+                        </span>
+                    )}
                     Submit
                 </Button>
             </div>

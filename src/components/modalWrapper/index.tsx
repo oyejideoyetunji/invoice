@@ -9,7 +9,7 @@ const Modal = styled.section<{
     padding: 0;
     width: 100vw;
     height: 100vh;
-    position: fixed;
+    position: absolute;
     cursor: pointer;
     display: flex;
     top: 0;

@@ -3,34 +3,20 @@ import { AuthData, LoginData, SignUpData } from '../lib/types'
 
 const baseUrl = 'https://sthackup-invoice-service.herokuapp.com'
 
-export async function loginService(
-    payload: LoginData
-): Promise<AuthData | null> {
+export async function loginService(payload: LoginData): Promise<AuthData> {
     try {
         const { data } = await axios.post(`${baseUrl}/api/login`, payload)
-        if (data) {
-            // console.log(data)
-            return data
-        }
-        return null
-    } catch (_err) {
-        // console.log(err)
-        return null
+        return data
+    } catch (error) {
+        return error.response.data
     }
 }
 
-export async function SignUpService(
-    payload: SignUpData
-): Promise<AuthData | null> {
+export async function SignUpService(payload: SignUpData): Promise<AuthData> {
     try {
         const { data } = await axios.post(`${baseUrl}/api/user`, payload)
-        if (data) {
-            // console.log(data)
-            return data
-        }
-        return null
-    } catch (_err) {
-        // console.log(err)
-        return null
+        return data
+    } catch (error) {
+        return error.response.data
     }
 }
