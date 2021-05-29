@@ -9,13 +9,13 @@ export async function loginService(
     try {
         const { data } = await axios.post(`${baseUrl}/api/login`, payload)
         if (data) {
-            console.log(data)
+            // console.log(data)
             return data
         }
         return null
-    } catch (err) {
-        console.log(err)
-        return err
+    } catch (_err) {
+        // console.log(err)
+        return null
     }
 }
 
@@ -25,12 +25,12 @@ export async function SignUpService(
     try {
         const { data } = await axios.post(`${baseUrl}/api/user`, payload)
         if (data) {
-            console.log(data)
+            // console.log(data)
             return data
         }
         return null
-    } catch (err) {
-        console.log(err)
-        return err
+    } catch (_err) {
+        // console.log(err)
+        return null
     }
 }

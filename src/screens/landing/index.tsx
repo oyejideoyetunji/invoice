@@ -90,18 +90,22 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
 
     async function onLoginSubmit(data: LoginData) {
         const authData = await loginService(data)
-        setStoreData(StoreKey.USER, authData?.user_data)
-        setStoreData(StoreKey.TOKEN, authData?.token)
+        if (authData) {
+            setStoreData(StoreKey.USER, authData?.user_data)
+            setStoreData(StoreKey.TOKEN, authData?.token)
 
-        props.history.go(0)
+            props.history.go(0)
+        }
     }
 
     async function onSignUpSubmit(data: SignUpData) {
         const authData = await SignUpService(data)
-        setStoreData(StoreKey.USER, authData?.user_data)
-        setStoreData(StoreKey.TOKEN, authData?.token)
+        if (authData) {
+            setStoreData(StoreKey.USER, authData?.user_data)
+            setStoreData(StoreKey.TOKEN, authData?.token)
 
-        props.history.go(0)
+            props.history.go(0)
+        }
     }
 }
 

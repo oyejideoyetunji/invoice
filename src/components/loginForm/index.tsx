@@ -26,7 +26,7 @@ const StyledForm = styled.form`
 const BrandWrapper = styled.section`
     width: 100%;
     height: 35%;
-    margin: 18px 0;
+    margin: 12px 0;
 `
 const CloseModalButtonWrapper = styled.span`
     width: fit-content;
@@ -47,7 +47,7 @@ const LoginForm: FC<LoginFormProps> = (props: LoginFormProps) => {
 
     return (
         <StyledForm onSubmit={onSubmit}>
-            <div className="w-full flex justify-end px-4">
+            <div className="w-full flex justify-end">
                 <CloseModalButtonWrapper
                     onClick={props.onCloseModal}
                     className="text-lg md:text-xl"
@@ -66,6 +66,7 @@ const LoginForm: FC<LoginFormProps> = (props: LoginFormProps) => {
                 onChange={onEmailChange}
                 required
             />
+            <div className="py-2" />
             <Input
                 type="password"
                 label="Password"

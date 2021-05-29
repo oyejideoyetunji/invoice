@@ -9,9 +9,8 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 const StyledForm = styled.form`
     width: 80%;
-    height: 500px;
+    height: 520px;
     margin: 0;
-    padding: 0;
     padding: 16px;
     border-radius: 16px;
     background-color: ${Colour.white};
@@ -27,8 +26,8 @@ const StyledForm = styled.form`
 `
 const BrandWrapper = styled.section`
     width: 100%;
-    height: 20%;
-    margin: 18px 0;
+    height: 50px;
+    margin: 12px 0;
 `
 const CloseModalButtonWrapper = styled.span`
     width: fit-content;
@@ -51,7 +50,7 @@ const SignUpForm: FC<SignUpFormProps> = (props: SignUpFormProps) => {
 
     return (
         <StyledForm onSubmit={onSubmit}>
-            <div className="w-full flex justify-end px-4">
+            <div className="w-full flex justify-end">
                 <CloseModalButtonWrapper
                     onClick={props.onCloseModal}
                     className="text-lg md:text-xl"
@@ -70,6 +69,7 @@ const SignUpForm: FC<SignUpFormProps> = (props: SignUpFormProps) => {
                 onChange={onFirstNameChange}
                 required
             />
+            <div className="py-2" />
             <Input
                 type="text"
                 label="Last Name"
@@ -78,6 +78,7 @@ const SignUpForm: FC<SignUpFormProps> = (props: SignUpFormProps) => {
                 onChange={onLastNameChange}
                 required
             />
+            <div className="py-2" />
             <Input
                 type="email"
                 label="Email address"
@@ -86,6 +87,7 @@ const SignUpForm: FC<SignUpFormProps> = (props: SignUpFormProps) => {
                 onChange={onEmailChange}
                 required
             />
+            <div className="py-2" />
             <Input
                 type="password"
                 label="Password"

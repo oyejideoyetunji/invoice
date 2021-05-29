@@ -14,6 +14,10 @@ export const StyledInput = styled.input<{ error?: boolean }>`
         border: thin solid
             ${({ error }) => (error ? Colour.danger : Colour.dodgerBlue)};
     }
+
+    &::placeholder {
+        font-size: 14px;
+    }
 `
 const InputWrapper = styled.div<{ error?: boolean }>`
     width: 100%;
