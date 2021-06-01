@@ -10,7 +10,7 @@ const StyledForm = styled.form`
     width: 80%;
     min-height: 500px;
     margin: 0;
-    padding: 16px;
+    padding: 18px;
     border-radius: 16px;
     background-color: ${Colour.white};
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;

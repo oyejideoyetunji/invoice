@@ -230,6 +230,7 @@ const Invoices: FC = () => {
             </Wrapper>
             {showInvoiceForm && (
                 <ModalWrapper
+                    modalPosition="fixed"
                     contentPosition="left"
                     onClose={onCloseInvoiceForm}
                 >
