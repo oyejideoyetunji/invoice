@@ -23,6 +23,11 @@ const Button = styled.button<ButtonProps>`
     cursor: pointer;
     line-height: 1;
 
+    &:focus {
+        outline: none;
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    }
+
     ${({ primary, color }) =>
         primary
             ? `
@@ -36,8 +41,8 @@ const Button = styled.button<ButtonProps>`
             `
             : `
                 color: #333;
-                background-color: transparent;
-                box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px inset;
+                background-color: ${Colour.white};
+                border: 1px solid rgba(0, 0, 0, 0.25);
         `}
     ${({ size }) => (size ? buttonSizeStyles[size] : buttonSizeStyles.medium)}
     ${({ backgroundColor }) =>
