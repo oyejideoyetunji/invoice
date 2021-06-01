@@ -11,7 +11,6 @@ import styled from 'styled-components'
 import { Colour } from '../../lib/colour'
 import Button from '../../components/button'
 import Innovation from '../../assets/images/innovation.svg'
-// import { H1 } from '../../components/typography'
 
 const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     const [showLogin, setShowLogin] = useState<boolean>(false)
