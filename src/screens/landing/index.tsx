@@ -110,7 +110,7 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         } else {
             setLoginLoading(false)
             if (authData.message) {
-                setLoginError(authData.message.split(':')[1])
+                setLoginError(authData.message)
             }
         }
     }
@@ -128,7 +128,7 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         } else {
             setSignUpLoading(false)
             if (authData.message) {
-                setSignUpError(authData.message.split(':')[1])
+                setSignUpError(authData.message)
             }
         }
     }
