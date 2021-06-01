@@ -7,7 +7,7 @@ const Header = styled.header`
     height: 85px;
     font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    background-color: ${Colour.primaryText};
+    background-color: ${Colour.white};
 
     & svg {
         display: inline-block;
@@ -63,7 +63,7 @@ const LandingPageTopBar: FC<LandingPageTopBarProps> = (
                         />
                     </g>
                 </svg>
-                <h1>Invoice</h1>
+                <h1>envoice</h1>
             </div>
             <div className="pb-2 sm:py-3 flex justify-end">
                 <Button onClick={props.onShowLoginModal} size="small">
