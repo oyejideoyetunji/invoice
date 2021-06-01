@@ -3,13 +3,14 @@ import styled from 'styled-components'
 import { Colour } from '../../lib/colour'
 
 const Modal = styled.section<{
+    modalPosition?: 'absolute' | 'fixed'
     contentPosition?: 'left' | 'right' | 'center'
 }>`
     margin: 0;
     padding: 0;
-    width: 100vw;
+    width: 100%;
     min-height: 100vh;
-    position: absolute;
+    position: ${({ modalPosition }) => modalPosition || 'absolute'};
     cursor: pointer;
     display: flex;
     top: 0;
@@ -40,6 +41,7 @@ const Modal = styled.section<{
 interface ModalWrapperProps {
     onClose(): void
     children: ReactNode
+    modalPosition?: 'absolute' | 'fixed'
     contentPosition?: 'left' | 'right' | 'center'
 }
 
@@ -47,7 +49,11 @@ export const ModalWrapper: FC<ModalWrapperProps> = (
     props: ModalWrapperProps
 ) => {
     return (
-        <Modal contentPosition={props.contentPosition} onClick={onModalClick}>
+        <Modal
+            modalPosition={props.modalPosition}
+            contentPosition={props.contentPosition}
+            onClick={onModalClick}
+        >
             {props.children}
         </Modal>
     )

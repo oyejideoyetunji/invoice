@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { RouteComponentProps } from 'react-router'
 import { removeStoreData } from '../../store'
 import Button from '../button'
-// import { Colour } from '../../lib/colour'
 import { StoreKey } from '../../lib/types'
+import { Colour } from '../../lib/colour'
 
 const Wrapper = styled.main`
     display: flex;
@@ -20,6 +20,7 @@ const LayoutBar = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background-color: ${Colour.white};
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
 
     @media only screen and (min-width: 1024px) {
@@ -35,30 +36,6 @@ const LayoutBar = styled.div`
     }
 `
 
-// const SideBar = styled.section`
-//     width: 150px;
-//     height: 100vh;
-//     padding-top: 100px;
-//     display: flex;
-//     flex-direction: column;
-//     position: fixed;
-//     top: 0;
-//     left: 0;
-//     background-color: ${Colour.white};
-//     color: ${Colour.darkBlue};
-//     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
-// `
-// const SideBarItem = styled.div`
-//     width: 100%;
-//     padding: 14px 18px;
-//     display: flex;
-//     align-items: center;
-
-//     & * {
-//         text-decoration: none;
-//     }
-// `
-
 const LogoutButtonWrapper = styled.div`
     width: fit-content;
     height: fit-content;
@@ -71,14 +48,6 @@ const Container = styled.section`
         margin-left: 103px;
     }
 `
-
-// const SideBarContents = [
-//     {
-//         name: 'Profile',
-//         path: '/',
-//         icon: '',
-//     },
-// ]
 
 export interface LayoutProps {
     children: ReactNode
