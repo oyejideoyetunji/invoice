@@ -11,6 +11,7 @@ import styled from 'styled-components'
 import { Colour } from '../../lib/colour'
 import Button from '../../components/button'
 import Innovation from '../../assets/images/innovation.svg'
+import { interpreteSignUpError } from '../../lib/utils/errorFormats'
 
 const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     const [showLogin, setShowLogin] = useState<boolean>(false)
@@ -128,7 +129,7 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         } else {
             setSignUpLoading(false)
             if (authData.message) {
-                setSignUpError(authData.message)
+                setSignUpError(interpreteSignUpError(authData.message))
             }
         }
     }
