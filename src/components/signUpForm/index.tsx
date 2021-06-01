@@ -9,7 +9,7 @@ import { faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 const StyledForm = styled.form`
     width: 80%;
-    height: 550px;
+    min-height: 550px;
     margin: 0;
     padding: 16px;
     border-radius: 16px;
@@ -26,7 +26,6 @@ const StyledForm = styled.form`
 `
 const BrandWrapper = styled.section`
     width: 100%;
-    height: 30px;
     margin: 12px 0;
 `
 const CloseModalButtonWrapper = styled.span`
@@ -65,7 +64,28 @@ const SignUpForm: FC<SignUpFormProps> = (props: SignUpFormProps) => {
                 </CloseModalButtonWrapper>
             </div>
             <BrandWrapper className="flex items-center justify-center">
-                Brand Here
+                <svg
+                    width="32"
+                    height="32"
+                    viewBox="0 0 32 32"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <g fill="none" fillRule="evenodd">
+                        <path
+                            d="M10 0h12a10 10 0 0110 10v12a10 10 0 01-10 10H10A10 10 0 010 22V10A10 10 0 0110 0z"
+                            fill="#FFF"
+                        />
+                        <path
+                            d="M5.3 10.6l10.4 6v11.1l-10.4-6v-11zm11.4-6.2l9.7 5.5-9.7 5.6V4.4z"
+                            fill="#555AB9"
+                        />
+                        <path
+                            d="M27.2 10.6v11.2l-10.5 6V16.5l10.5-6zM15.7 4.4v11L6 10l9.7-5.5z"
+                            fill="#91BAF8"
+                        />
+                    </g>
+                </svg>
+                <h1>envoice</h1>
             </BrandWrapper>
             <ErrorWrapper className="px-1 py-2 text-center">
                 {props.error}
@@ -108,15 +128,16 @@ const SignUpForm: FC<SignUpFormProps> = (props: SignUpFormProps) => {
             />
             <div className="w-full flex py-4 justify-end">
                 <Button size="medium" primary type="submit">
-                    {props.loading && (
-                        <span className="px-2">
+                    {props.loading ? (
+                        <span className="inline-block px-4">
                             <FontAwesomeIcon
                                 icon={faSpinner}
                                 className="fa-spin"
                             />
                         </span>
+                    ) : (
+                        'Submit'
                     )}
-                    Submit
                 </Button>
             </div>
         </StyledForm>
@@ -133,9 +154,11 @@ const SignUpForm: FC<SignUpFormProps> = (props: SignUpFormProps) => {
     }
     function onPasswordChange(event: ChangeEvent<HTMLInputElement>) {
         setPassword(event.target.value)
+        setPasswordError('')
     }
     async function onSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
+        setPasswordError('')
 
         if (password.length < 6) {
             setPasswordError(
