@@ -13,6 +13,13 @@ import Button from '../../components/button'
 import Innovation from '../../assets/images/innovation.svg'
 import { interpreteSignUpError } from '../../lib/utils/errorFormats'
 
+const Container = styled.section`
+    background-color: ${Colour.whiteSmoke};
+    height: 100vh;
+    padding-top: 90px;
+    box-sizing: border-box;
+`
+
 const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     const [showLogin, setShowLogin] = useState<boolean>(false)
     const [showSignUp, setShowSignUp] = useState<boolean>(false)
@@ -20,13 +27,6 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     const [signUpLoading, setSignUpLoading] = useState<boolean>(false)
     const [loginError, setLoginError] = useState<string>('')
     const [signUpError, setSignUpError] = useState<string>('')
-
-    const Container = styled.section`
-        background-color: ${Colour.whiteSmoke};
-        height: 100vh;
-        padding-top: 90px;
-        box-sizing: border-box;
-    `
 
     return (
         <>
