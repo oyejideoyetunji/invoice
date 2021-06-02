@@ -32,7 +32,7 @@ const Button = styled.button<ButtonProps>`
         primary
             ? `
                 color: ${Colour.white};
-                background-color: #1ea7fd;
+                background-color: ${Colour.primaryBlue};
         `
             : color
             ? `

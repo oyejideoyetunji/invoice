@@ -3,11 +3,18 @@ import styled from 'styled-components'
 import Button from '../../components/button'
 import { Colour } from '../../lib/colour'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronRight, faTimes } from '@fortawesome/free-solid-svg-icons'
+import {
+    faChevronRight,
+    faCircle,
+    faPlusCircle,
+    faTimes,
+} from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import { getUrlString, Routes } from '../../components/navigation/routes'
 import { ModalWrapper } from '../../components/modalWrapper'
 import InvoiceForm from '../../components/invoiceForm'
+import Badge, { getVariantColor } from '../../components/badge'
+import { Variant } from '../../lib/variants'
 
 const Wrapper = styled.section`
     min-height: 100vh;
@@ -153,6 +160,12 @@ const CloseModalButtonWrapper = styled.span`
     padding: 4px;
     cursor: pointer;
 `
+const IconWrapper = styled.span<{ size?: string }>`
+    ${({ size }) => size && `font-size: ${size};`}
+    display: inline-block;
+    width: fit-content;
+    height: fit-content;
+`
 
 const Invoices: FC = () => {
     const [showInvoiceForm, setShowInvoiceForm] = useState<boolean>(false)
@@ -175,18 +188,24 @@ const Invoices: FC = () => {
                         </div>
                         <div className="flex items-center">
                             <Button
-                                className="hidden md:inline"
+                                className="hidden md:inline flex items-center"
                                 onClick={onShowInvoiceForm}
                                 primary
                             >
+                                <IconWrapper className="pr-1" size="16px">
+                                    <FontAwesomeIcon icon={faPlusCircle} />
+                                </IconWrapper>
                                 New Invoice
                             </Button>
                             <Button
-                                className="md:hidden"
+                                className="md:hidden flex items-center"
                                 onClick={onShowInvoiceForm}
                                 size="small"
                                 primary
                             >
+                                <IconWrapper className="pr-1" size="12px">
+                                    <FontAwesomeIcon icon={faPlusCircle} />
+                                </IconWrapper>
                                 New
                             </Button>
                         </div>
@@ -210,7 +229,29 @@ const Invoices: FC = () => {
                                     NGN5236
                                 </span>
                                 <div className="invoice-status">
-                                    <span>Paid</span>
+                                    <Badge
+                                        variantColor={getVariantColor(
+                                            parseInt(itm) % 3 === 0
+                                                ? Variant.Warning
+                                                : parseInt(itm) % 3 === 1
+                                                ? Variant.Neutral
+                                                : Variant.Success
+                                        )}
+                                    >
+                                        <IconWrapper
+                                            className="pr-1"
+                                            size="8px"
+                                        >
+                                            <FontAwesomeIcon icon={faCircle} />
+                                        </IconWrapper>
+                                        <span className="text-sm">
+                                            {parseInt(itm) % 3 === 0
+                                                ? 'Pending'
+                                                : parseInt(itm) % 3 === 1
+                                                ? 'Draft'
+                                                : 'Paid'}
+                                        </span>
+                                    </Badge>
                                     <span className="pl-4 cursor-pointer">
                                         <Link
                                             to={`${getUrlString(

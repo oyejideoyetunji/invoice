@@ -103,11 +103,11 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         setLoginLoading(true)
         const authData = await loginService(data)
         if (authData && authData?.user_data && authData?.token) {
-            setLoginLoading(false)
             setStoreData(StoreKey.USER, authData?.user_data)
             setStoreData(StoreKey.TOKEN, authData?.token)
 
             props.history.go(0)
+            setLoginLoading(false)
         } else {
             setLoginLoading(false)
             if (authData.message) {
@@ -121,11 +121,11 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         setSignUpLoading(true)
         const authData = await SignUpService(data)
         if (authData && authData?.user_data && authData?.token) {
-            setSignUpLoading(false)
             setStoreData(StoreKey.USER, authData?.user_data)
             setStoreData(StoreKey.TOKEN, authData?.token)
 
             props.history.go(0)
+            setSignUpLoading(false)
         } else {
             setSignUpLoading(false)
             if (authData.message) {

@@ -4,14 +4,16 @@ import styled from 'styled-components'
 import Button from '../../components/button'
 import { Colour } from '../../lib/colour'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faCircle } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import { Routes } from '../../components/navigation/routes'
+import Badge, { getVariantColor } from '../../components/badge'
+import { Variant } from '../../lib/variants'
 
 const Wrapper = styled.section`
     min-height: 100vh;
     margin-top: 3px;
-    padding: 32px 16px 0;
+    padding: 18px 16px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -63,6 +65,12 @@ const SumtotalWrapper = styled.div`
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
 `
+const IconWrapper = styled.span<{ size?: string }>`
+    ${({ size }) => size && `font-size: ${size};`}
+    display: inline-block;
+    width: fit-content;
+    height: fit-content;
+`
 
 const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -71,10 +79,10 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
 
     return (
         <Wrapper className="relative md:static">
-            <div className="flex items-center justify-start py-8">
-                <div className="pr-2 cursor-pointer">
+            <div className="flex items-center justify-start pb-8">
+                <div className="pr-8 cursor-pointer">
                     <Link to={Routes.Invoices}>
-                        <FontAwesomeIcon icon={faChevronLeft} />
+                        <FontAwesomeIcon icon={faArrowLeft} />
                     </Link>
                 </div>
                 <span>Go back</span>
@@ -82,7 +90,12 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
             <ScreenCard className="flex p-6 justify-between my-4">
                 <div className="w-full md:w-auto flex items-center justify-between md:justify-start">
                     <span className="pr-4">Status</span>
-                    <span>Pending</span>
+                    <Badge variantColor={getVariantColor(Variant.Warning)}>
+                        <IconWrapper className="pr-1" size="8px">
+                            <FontAwesomeIcon icon={faCircle} />
+                        </IconWrapper>
+                        <span className="text-sm">Pending</span>
+                    </Badge>
                 </div>
                 <div className="hidden md:flex items-center">
                     <Button>Edit</Button>
