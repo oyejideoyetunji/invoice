@@ -1,8 +1,9 @@
 export enum Colour {
     darkBlue = '#111517',
     darkBlueAlt = '#192024',
+    primaryBlue = '#1ea7fd',
     elementsBackground = '#2b3945',
-    primaryText = '#ffffff',
+    primaryText = '#111517',
     white = '#ffffff',
     dodgerBlue = '#0483ff',
     lightGray = '#e6e3e3',
@@ -10,4 +11,8 @@ export enum Colour {
     whiteModalBackground = 'rgba(225, 225, 225, 0.4)',
     whiteSmoke = '#f1f4fa',
     whiteSmokeAlt = '#ffffef',
+    warning = '#ff6701',
+    warningShade = '#fcecdd',
+    successShade = '#e8ffff',
+    success = '#41aea9',
 }
