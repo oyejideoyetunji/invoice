@@ -2,6 +2,7 @@ export enum Colour {
     darkBlue = '#111517',
     darkBlueAlt = '#192024',
     primaryBlue = '#1ea7fd',
+    purpleBlue = '#867ae9',
     elementsBackground = '#2b3945',
     primaryText = '#111517',
     white = '#ffffff',
