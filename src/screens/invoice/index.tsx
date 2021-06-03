@@ -242,7 +242,9 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                     </BalanceSheet>
                 </InvoiceDetailsCard>
                 <MobileActionBar className="action-bar md:hidden w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
-                    <Button size="small">Edit</Button>
+                    <Button onClick={onShowInvoiceForm} size="small">
+                        Edit
+                    </Button>
                     <span className="px-2" />
                     <Button size="small" color={Colour.danger}>
                         Delete
