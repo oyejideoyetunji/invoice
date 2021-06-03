@@ -156,7 +156,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                     </div>
                 </div>
 
-                <div className="flex flex-wrap justify-between py-6">
+                <div className="flex flex-wrap justify-between pt-6">
                     <div className="w-100p md-w-45p py-2">
                         <Calendar
                             onChange={onInvoiceDateChange}
@@ -169,6 +169,13 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                             <option>One month time</option>
                         </Select>
                     </div>
+                </div>
+
+                <div className="py-2">
+                    <Input
+                        label="Transaction Description"
+                        placeholder="Transaction Description"
+                    />
                 </div>
 
                 <H1
