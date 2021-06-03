@@ -4,7 +4,6 @@ import { Colour } from '../../lib/colour'
 export interface ButtonProps {
     color?: string
     primary?: boolean
-    backgroundColor?: string
     size?: 'small' | 'medium' | 'large'
 }
 
@@ -45,8 +44,6 @@ const Button = styled.button<ButtonProps>`
                 border: 1px solid rgba(0, 0, 0, 0.25);
         `}
     ${({ size }) => (size ? buttonSizeStyles[size] : buttonSizeStyles.medium)}
-    ${({ backgroundColor }) =>
-        backgroundColor && `background-color: ${backgroundColor}`}
 `
 
 export default Button
