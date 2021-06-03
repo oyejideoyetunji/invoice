@@ -30,3 +30,9 @@ export const Span = styled.span<{
     font-weight: ${({ fontWeight }) => fontWeight || '400'};
     color: ${({ color }) => color || Colour.darkBlueAlt};
 `
+
+export const Text = styled.span<{
+    color?: string
+}>`
+    color: ${({ color }) => color || Colour.darkBlueAlt};
+`
