@@ -216,15 +216,24 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                         <FontAwesomeIcon icon={faTrashAlt} />
                     </div>
                 </ItemsListGrid>
+                <Button
+                    type="button"
+                    color={Colour.purpleBlue}
+                    className="w-full my-2"
+                >
+                    + Add New Item
+                </Button>
             </div>
             <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
-                <Button size="small">Save</Button>
+                <Button type="button" size="small">
+                    Save
+                </Button>
                 <span className="px-2" />
-                <Button size="small" color={Colour.danger}>
+                <Button type="button" size="small" color={Colour.danger}>
                     Discard
                 </Button>
                 <span className="px-2" />
-                <Button size="small" primary>
+                <Button type="submit" size="small" primary>
                     Submit
                 </Button>
             </ActionBar>
