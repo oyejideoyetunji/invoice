@@ -275,7 +275,7 @@ const Invoices: FC = () => {
                     contentPosition="left"
                     onClose={onCloseInvoiceForm}
                 >
-                    <FormWrapper className="w-full sm:w-11/12 md:w-4/5 lg:w-4/6 xl:w-2/5">
+                    <FormWrapper className="w-full sm:w-11/12 md:w-10/12 lg:w-9/12 xl:w-1/2 2xl:w-2/5">
                         <div className="w-full flex justify-end py-4 px-4">
                             <CloseModalButtonWrapper
                                 onClick={onCloseInvoiceForm}
