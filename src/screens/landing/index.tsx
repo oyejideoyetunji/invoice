@@ -37,7 +37,7 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                 />
             </div>
             <Container className="w-full flex justify-center md:justify-between px-8 lg:px-20">
-                <div className="col col-el-1 py-4 flex flex-col w-4/5 md:w-1/2 lg:w-1/3 mt-8">
+                <div className="flex flex-col w-4/5 md:w-1/2 lg:w-1/3 pt-8">
                     <h1 className="text-4xl md:text-5xl font-bold leading-snug md:leading-normal">
                         Invoice Software that is simple and free
                     </h1>
@@ -55,7 +55,7 @@ const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                         </Button>
                     </div>
                 </div>
-                <div className="col col-el-2 hidden md:block md:w-1/2 lg:w-2/3 py-4">
+                <div className="h-full hidden md:block md:w-1/2 lg:w-2/3 py-1">
                     <img src={Innovation} alt="Bussiness Innovation" />
                 </div>
             </Container>
