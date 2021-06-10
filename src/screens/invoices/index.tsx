@@ -89,6 +89,11 @@ const InvoiceCardWrapper = styled.div`
     border-radius: 12px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     background-color: ${Colour.white};
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    }
 
     & > * {
         display: flex;
@@ -125,6 +130,7 @@ const InvoiceCardWrapper = styled.div`
 
     @media only screen and (min-width: 767px) {
         padding: 24px;
+        box-shadow: rgba(99, 99, 99, 0.1) 0px 1px 4px 0px;
         grid-template-areas: 'id date cus-name amount status';
 
         & .invoice-id,
@@ -215,56 +221,57 @@ const Invoices: FC = () => {
                 <InvoiceListWrapper>
                     {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(
                         (itm) => (
-                            <InvoiceCardWrapper key={itm}>
-                                <span className="invoice-id text-sm md:text-base font-bold md:font-medium">
-                                    #XARTG012
-                                </span>
-                                <span className="invoice-date text-sm md:text-base font-light">
-                                    Due 19 Aug 2021
-                                </span>
-                                <span className="invoice-cus-name text-sm md:text-base font-light">
-                                    Alex Grim
-                                </span>
-                                <span className="invoice-amount text-base md:text-lg font-bold md:font-medium">
-                                    NGN5236
-                                </span>
-                                <div className="invoice-status">
-                                    <Badge
-                                        variantColor={getVariantColor(
-                                            parseInt(itm) % 3 === 0
-                                                ? Variant.Warning
-                                                : parseInt(itm) % 3 === 1
-                                                ? Variant.Neutral
-                                                : Variant.Success
-                                        )}
-                                    >
-                                        <IconWrapper
-                                            className="pr-1"
-                                            size="8px"
+                            <Link
+                                to={`${getUrlString(Routes.Invoice)}XARTG012`}
+                                key={itm}
+                            >
+                                <InvoiceCardWrapper>
+                                    <span className="invoice-id text-sm md:text-base font-bold md:font-medium">
+                                        #XARTG012
+                                    </span>
+                                    <span className="invoice-date text-sm md:text-base font-light">
+                                        Due 19 Aug 2021
+                                    </span>
+                                    <span className="invoice-cus-name text-sm md:text-base font-light">
+                                        Alex Grim
+                                    </span>
+                                    <span className="invoice-amount text-base md:text-lg font-bold md:font-medium">
+                                        NGN5236
+                                    </span>
+                                    <div className="invoice-status">
+                                        <Badge
+                                            variantColor={getVariantColor(
+                                                parseInt(itm) % 3 === 0
+                                                    ? Variant.Warning
+                                                    : parseInt(itm) % 3 === 1
+                                                    ? Variant.Neutral
+                                                    : Variant.Success
+                                            )}
                                         >
-                                            <FontAwesomeIcon icon={faCircle} />
-                                        </IconWrapper>
-                                        <span className="text-sm">
-                                            {parseInt(itm) % 3 === 0
-                                                ? 'Pending'
-                                                : parseInt(itm) % 3 === 1
-                                                ? 'Draft'
-                                                : 'Paid'}
-                                        </span>
-                                    </Badge>
-                                    <span className="pl-4 cursor-pointer">
-                                        <Link
-                                            to={`${getUrlString(
-                                                Routes.Invoice
-                                            )}XARTG012`}
-                                        >
+                                            <IconWrapper
+                                                className="pr-1"
+                                                size="8px"
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faCircle}
+                                                />
+                                            </IconWrapper>
+                                            <span className="text-sm">
+                                                {parseInt(itm) % 3 === 0
+                                                    ? 'Pending'
+                                                    : parseInt(itm) % 3 === 1
+                                                    ? 'Draft'
+                                                    : 'Paid'}
+                                            </span>
+                                        </Badge>
+                                        <span className="pl-4 cursor-pointer hidden md:inline-block">
                                             <FontAwesomeIcon
                                                 icon={faChevronRight}
                                             />
-                                        </Link>
-                                    </span>
-                                </div>
-                            </InvoiceCardWrapper>
+                                        </span>
+                                    </div>
+                                </InvoiceCardWrapper>
+                            </Link>
                         )
                     )}
                 </InvoiceListWrapper>
