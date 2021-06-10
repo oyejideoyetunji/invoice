@@ -15,9 +15,10 @@ import { interpreteSignUpError } from '../../lib/utils/errorFormats'
 
 const Container = styled.section`
     background-color: ${Colour.whiteSmoke};
-    height: 100vh;
-    padding-top: 90px;
+    height: 100%;
+    padding-top: 80px;
     box-sizing: border-box;
+    overflow-y: hidden;
 `
 
 const Landing: FC<RouteComponentProps> = (props: RouteComponentProps) => {
