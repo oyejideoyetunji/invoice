@@ -35,7 +35,15 @@ export enum IInvoiceStatus {
     PAID = 'paid',
 }
 
+export interface IInvoiceItemInput {
+    name: string
+    price: number
+    quantity: number
+    total: number
+}
+
 export interface IInvoiceItem {
+    _id?: string
     name: string
     price: number
     quantity: number
@@ -66,7 +74,7 @@ export interface IInvoiceInput {
     transactionDescription: string
     totalAmount: number
     status: IInvoiceStatus
-    itemList: IInvoiceItem[]
+    itemList: IInvoiceItemInput[]
 }
 
 export interface IInvoice {

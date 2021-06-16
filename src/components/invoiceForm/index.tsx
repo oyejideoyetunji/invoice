@@ -8,6 +8,7 @@ import {
     ILabeledInvoiceItem,
     IInvoiceStatus,
     Option,
+    IInvoice,
 } from '../../lib/types'
 import { getTimeFromNow, TimeDifference } from '../../lib/utils/dateTime'
 import Button from '../button'
@@ -16,7 +17,10 @@ import { Input } from '../input'
 import { Select } from '../select'
 import { H1, Text } from '../typography'
 import { v4 as uuidv4 } from 'uuid'
-import { CreateInvoiceService } from '../../services/request'
+import {
+    CreateInvoiceService,
+    UpdateInvoiceService,
+} from '../../services/request'
 
 const StyledForm = styled.form`
     width: 100%;
@@ -133,31 +137,66 @@ const defaultItemListData = [
 
 export interface InvoiceFormProps {
     action: 'New' | 'Edit'
-    invoiceData?: IInvoiceInput
+    invoiceData?: IInvoice
+    onDiscard?(): void
 }
 
 const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
-    const [marchantCountry, setMarchantCountry] = useState<string>('')
-    const [marchantCity, setMarchantCity] = useState<string>('')
-    const [marchantPostCode, setMarchantPostCode] = useState<string>('')
-    const [marchantStreet, setMarchantStreet] = useState<string>('')
-    const [clientName, setClientName] = useState<string>('')
-    const [clientEmail, setClientEmail] = useState<string>('')
-    const [clientCountry, setClientCountry] = useState<string>('')
-    const [clientCity, setClientCity] = useState<string>('')
-    const [clientPostCode, setClientPostCode] = useState<string>('')
-    const [clientStreet, setClientStreet] = useState<string>('')
+    const [marchantCountry, setMarchantCountry] = useState<string>(
+        props?.invoiceData?.marchantCountry || ''
+    )
+    const [marchantCity, setMarchantCity] = useState<string>(
+        props?.invoiceData?.marchantCity || ''
+    )
+    const [marchantPostCode, setMarchantPostCode] = useState<string>(
+        props?.invoiceData?.marchantPostCode || ''
+    )
+    const [marchantStreet, setMarchantStreet] = useState<string>(
+        props?.invoiceData?.marchantStreet || ''
+    )
+    const [clientName, setClientName] = useState<string>(
+        props?.invoiceData?.clientName || ''
+    )
+    const [clientEmail, setClientEmail] = useState<string>(
+        props?.invoiceData?.clientEmail || ''
+    )
+    const [clientCountry, setClientCountry] = useState<string>(
+        props?.invoiceData?.clientCountry || ''
+    )
+    const [clientCity, setClientCity] = useState<string>(
+        props?.invoiceData?.clientCity || ''
+    )
+    const [clientPostCode, setClientPostCode] = useState<string>(
+        props?.invoiceData?.clientPostCode || ''
+    )
+    const [clientStreet, setClientStreet] = useState<string>(
+        props?.invoiceData?.clientStreet || ''
+    )
     const [
         transactionDescription,
         setTransactionDescription,
-    ] = useState<string>('')
-    const [invoiceDate, setInvoiceDate] = useState<Date>(new Date())
-    const [paymentTerms, setPaymentTerms] = useState<Date>(new Date())
+    ] = useState<string>(props?.invoiceData?.transactionDescription || '')
+    const [invoiceDate, setInvoiceDate] = useState<Date>(
+        props?.invoiceData?.invoiceDate
+            ? new Date(props?.invoiceData?.invoiceDate)
+            : new Date()
+    )
+    const [paymentTerms, setPaymentTerms] = useState<Date>(
+        props?.invoiceData?.paymentTerms
+            ? new Date(props?.invoiceData?.paymentTerms)
+            : new Date()
+    )
     const [itemListData, setItemListData] = useState<ILabeledInvoiceItem[]>(
-        defaultItemListData
+        props?.invoiceData?.itemList?.map((itm) => {
+            delete itm._id
+            return {
+                ...itm,
+                tempId: `${uuidv4()}`,
+            }
+        }) || defaultItemListData
     )
     const [status, setInvoiceStatus] = useState<IInvoiceStatus>(
-        IInvoiceStatus.DRAFT
+        props?.invoiceData?.status || IInvoiceStatus.DRAFT
     )
 
     return (
@@ -394,26 +433,50 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
             </div>
             {props.action === 'New' && (
                 <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
-                    <Button onClick={onSaveInvoice} type="button" size="small">
+                    <Button
+                        onClick={onSaveInvoiceAsDraft}
+                        type="button"
+                        size="small"
+                    >
                         Save
                     </Button>
                     <span className="px-2" />
-                    <Button type="button" size="small" color={Colour.danger}>
+                    <Button
+                        onClick={props.onDiscard}
+                        type="button"
+                        size="small"
+                        color={Colour.danger}
+                    >
                         Discard
                     </Button>
                     <span className="px-2" />
-                    <Button type="button" size="small" primary>
+                    <Button
+                        onClick={onSubmitInvoice}
+                        type="button"
+                        size="small"
+                        primary
+                    >
                         Submit
                     </Button>
                 </ActionBar>
             )}
-            {props.action === 'Edit' && (
+            {props.action === 'Edit' && props?.invoiceData?.id && (
                 <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
-                    <Button type="button" size="small" color={Colour.danger}>
+                    <Button
+                        onClick={props.onDiscard}
+                        type="button"
+                        size="small"
+                        color={Colour.danger}
+                    >
                         Cancel
                     </Button>
                     <span className="px-2" />
-                    <Button type="submit" size="small" primary>
+                    <Button
+                        onClick={onSaveInvoiceChanges}
+                        type="button"
+                        size="small"
+                        primary
+                    >
                         Save Changes
                     </Button>
                 </ActionBar>
@@ -501,14 +564,15 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
     function onPaymentTermsChange(event: ChangeEvent<HTMLSelectElement>) {
         setPaymentTerms(new Date(event.target.value))
     }
-    async function onSubmit() {
+    function getSubmittedData(): IInvoiceInput {
         const itemList = itemListData.map((item) => ({
             name: item.name,
             price: item.price,
             quantity: item.quantity,
             total: item.total,
         }))
-        const invoiceInput: IInvoiceInput = {
+
+        return {
             marchantStreet,
             marchantCity,
             marchantPostCode,
@@ -529,13 +593,46 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                 0
             ),
         }
+    }
+    async function onSaveInvoiceAsDraft() {
+        setInvoiceStatus(IInvoiceStatus.DRAFT)
+        const invoiceInput = getSubmittedData()
 
         const invoiceData = await CreateInvoiceService(invoiceInput)
-        console.log(invoiceData)
+        if (invoiceData && invoiceData.id) {
+            console.log(invoiceData)
+        } else if (invoiceData && invoiceData.message) {
+            console.log(invoiceData)
+        }
     }
-    function onSaveInvoice() {
-        setInvoiceStatus(IInvoiceStatus.DRAFT)
-        onSubmit()
+    async function onSubmitInvoice() {
+        setInvoiceStatus(IInvoiceStatus.PENDING)
+        const invoiceInput = getSubmittedData()
+
+        const invoiceData = await CreateInvoiceService(invoiceInput)
+        if (invoiceData && invoiceData.id) {
+            console.log(invoiceData)
+        } else if (invoiceData && invoiceData.message) {
+            console.log(invoiceData)
+        }
+    }
+    async function onSaveInvoiceChanges() {
+        if (props.invoiceData?.status) {
+            setInvoiceStatus(props.invoiceData?.status)
+            const invoiceInput = getSubmittedData()
+
+            console.log(invoiceInput)
+
+            const invoiceData = await UpdateInvoiceService(
+                invoiceInput,
+                props.invoiceData.id
+            )
+            if (invoiceData && invoiceData.id) {
+                console.log(invoiceData)
+            } else if (invoiceData && invoiceData.message) {
+                console.log(invoiceData)
+            }
+        }
     }
 }
 

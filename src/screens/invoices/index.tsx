@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Button from '../../components/button'
 import { Colour } from '../../lib/colour'
@@ -15,6 +15,8 @@ import { ModalWrapper } from '../../components/modalWrapper'
 import InvoiceForm from '../../components/invoiceForm'
 import Badge, { getVariantColor } from '../../components/badge'
 import { Variant } from '../../lib/variants'
+import { ReadAllInvoiceService } from '../../services/request'
+import { IInvoice, IInvoiceStatus } from '../../lib/types'
 
 const Wrapper = styled.section`
     min-height: 100vh;
@@ -175,6 +177,22 @@ const IconWrapper = styled.span<{ size?: string }>`
 
 const Invoices: FC = () => {
     const [showInvoiceForm, setShowInvoiceForm] = useState<boolean>(false)
+    const [invoices, setInvoices] = useState<IInvoice[]>()
+
+    useEffect(() => {
+        let isMounted = true
+        const getAllInvoices = async () => {
+            const invoicesData = await ReadAllInvoiceService()
+            console.log(invoicesData)
+            if (isMounted && invoicesData.length) {
+                setInvoices(invoicesData)
+            }
+        }
+        getAllInvoices()
+        return () => {
+            isMounted = false
+        }
+    }, [])
 
     return (
         <>
@@ -219,31 +237,41 @@ const Invoices: FC = () => {
                 </TopBar>
 
                 <InvoiceListWrapper>
-                    {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(
-                        (itm) => (
+                    {invoices &&
+                        invoices.length > 0 &&
+                        invoices.map((invoice) => (
                             <Link
-                                to={`${getUrlString(Routes.Invoice)}XARTG012`}
-                                key={itm}
+                                to={`${getUrlString(Routes.Invoice)}${
+                                    invoice.id
+                                }`}
+                                key={invoice.id}
                             >
                                 <InvoiceCardWrapper>
                                     <span className="invoice-id text-sm md:text-base font-bold md:font-medium">
-                                        #XARTG012
+                                        {invoice.invoiceNumber || '#XARTG012'}
                                     </span>
                                     <span className="invoice-date text-sm md:text-base font-light">
-                                        Due 19 Aug 2021
+                                        Due{' '}
+                                        {new Date(
+                                            invoice.paymentTerms
+                                        ).toLocaleDateString() || '19 Aug 2021'}
                                     </span>
                                     <span className="invoice-cus-name text-sm md:text-base font-light">
-                                        Alex Grim
+                                        {invoice.clientName || 'Alex Grim'}
                                     </span>
                                     <span className="invoice-amount text-base md:text-lg font-bold md:font-medium">
-                                        NGN5236
+                                        {`NGN${
+                                            invoice.totalAmount || 'NGN5236'
+                                        }`}
                                     </span>
                                     <div className="invoice-status">
                                         <Badge
                                             variantColor={getVariantColor(
-                                                parseInt(itm) % 3 === 0
+                                                invoice.status ===
+                                                    IInvoiceStatus.PENDING
                                                     ? Variant.Warning
-                                                    : parseInt(itm) % 3 === 1
+                                                    : invoice.status ===
+                                                      IInvoiceStatus.DRAFT
                                                     ? Variant.Neutral
                                                     : Variant.Success
                                             )}
@@ -257,11 +285,7 @@ const Invoices: FC = () => {
                                                 />
                                             </IconWrapper>
                                             <span className="text-sm">
-                                                {parseInt(itm) % 3 === 0
-                                                    ? 'Pending'
-                                                    : parseInt(itm) % 3 === 1
-                                                    ? 'Draft'
-                                                    : 'Paid'}
+                                                {invoice.status.toUpperCase()}
                                             </span>
                                         </Badge>
                                         <span className="pl-4 cursor-pointer hidden md:inline-block">
@@ -272,8 +296,7 @@ const Invoices: FC = () => {
                                     </div>
                                 </InvoiceCardWrapper>
                             </Link>
-                        )
-                    )}
+                        ))}
                 </InvoiceListWrapper>
             </Wrapper>
             {showInvoiceForm && (
@@ -291,7 +314,10 @@ const Invoices: FC = () => {
                                 <FontAwesomeIcon icon={faTimes} />
                             </CloseModalButtonWrapper>
                         </div>
-                        <InvoiceForm action="New" />
+                        <InvoiceForm
+                            onDiscard={onCloseInvoiceForm}
+                            action="New"
+                        />
                     </FormWrapper>
                 </ModalWrapper>
             )}
