@@ -1,6 +1,7 @@
 import React, { FC, SelectHTMLAttributes } from 'react'
 import styled from 'styled-components'
 import { Colour } from '../../lib/colour'
+// import { Option } from '../../lib/types'
 
 const SelectWrapper = styled.div<{ error?: boolean }>`
     width: 100%;
@@ -64,3 +65,14 @@ export const Select: FC<
         </SelectWrapper>
     )
 }
+
+// export interface ControlledSelectProps {
+//     options: Option[]
+//     onChange(): void
+// }
+
+// export const ControlledSelect: FC<
+//     ControlledSelectProps & SelectComponentProps
+// > = (props: ControlledSelectProps & SelectComponentProps) => {
+//     return <Select></Select>
+// }

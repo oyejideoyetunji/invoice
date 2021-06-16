@@ -1,13 +1,22 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { FC, FormEvent, useState } from 'react'
+import React, { ChangeEvent, FC, useState } from 'react'
 import styled from 'styled-components'
 import { Colour } from '../../lib/colour'
+import {
+    IInvoiceInput,
+    ILabeledInvoiceItem,
+    IInvoiceStatus,
+    Option,
+} from '../../lib/types'
+import { getTimeFromNow, TimeDifference } from '../../lib/utils/dateTime'
 import Button from '../button'
 import Calendar from '../calendar'
 import { Input } from '../input'
 import { Select } from '../select'
 import { H1, Text } from '../typography'
+import { v4 as uuidv4 } from 'uuid'
+import { CreateInvoiceService } from '../../services/request'
 
 const StyledForm = styled.form`
     width: 100%;
@@ -89,16 +98,70 @@ const ItemsListGrid = styled.div`
     }
 `
 
+const paymentTermsOptions: Option<Date>[] = [
+    {
+        label: 'Immediately',
+        value: new Date(),
+    },
+    {
+        label: 'Next two days',
+        value: getTimeFromNow(2, TimeDifference.DAY) as Date,
+    },
+    {
+        label: 'Next Seven days',
+        value: getTimeFromNow(7, TimeDifference.DAY) as Date,
+    },
+    {
+        label: 'Next Two weeks',
+        value: getTimeFromNow(14, TimeDifference.DAY) as Date,
+    },
+    {
+        label: 'Next One Month',
+        value: getTimeFromNow(1, TimeDifference.MONTH) as Date,
+    },
+]
+
+const defaultItemListData = [
+    {
+        tempId: `${uuidv4()}`,
+        name: '',
+        price: 0,
+        quantity: 0,
+        total: 0,
+    },
+]
+
 export interface InvoiceFormProps {
     action: 'New' | 'Edit'
-    invoiceData?: Record<string, unknown>
+    invoiceData?: IInvoiceInput
 }
 
 const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
+    const [marchantCountry, setMarchantCountry] = useState<string>('')
+    const [marchantCity, setMarchantCity] = useState<string>('')
+    const [marchantPostCode, setMarchantPostCode] = useState<string>('')
+    const [marchantStreet, setMarchantStreet] = useState<string>('')
+    const [clientName, setClientName] = useState<string>('')
+    const [clientEmail, setClientEmail] = useState<string>('')
+    const [clientCountry, setClientCountry] = useState<string>('')
+    const [clientCity, setClientCity] = useState<string>('')
+    const [clientPostCode, setClientPostCode] = useState<string>('')
+    const [clientStreet, setClientStreet] = useState<string>('')
+    const [
+        transactionDescription,
+        setTransactionDescription,
+    ] = useState<string>('')
     const [invoiceDate, setInvoiceDate] = useState<Date>(new Date())
+    const [paymentTerms, setPaymentTerms] = useState<Date>(new Date())
+    const [itemListData, setItemListData] = useState<ILabeledInvoiceItem[]>(
+        defaultItemListData
+    )
+    const [status, setInvoiceStatus] = useState<IInvoiceStatus>(
+        IInvoiceStatus.DRAFT
+    )
 
     return (
-        <StyledForm onSubmit={onSubmit} className="relative">
+        <StyledForm className="relative">
             <div className="w-full px-4 sm:px-8 pb-24">
                 <h1 className="pb-4 text-xl sm:text-2xl md:text-4xl leading-snug md:leading-normal">
                     {props.action} Invoice
@@ -112,19 +175,43 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                 >
                     Bill From
                 </H1>
-                <div className="py-2">
-                    <Input label="Street Address" />
-                </div>
                 <div className="flex flex-wrap justify-between">
-                    <div className="w-45p md-w-30p py-2">
-                        <Input label="City" />
-                    </div>
-                    <div className="w-45p md-w-30p py-2">
-                        <Input label="Post Code" />
-                    </div>
                     <div className="w-100p md-w-30p py-2">
-                        <Input label="Country" />
+                        <Input
+                            onChange={onMarchantCountryChange}
+                            type="text"
+                            value={marchantCountry}
+                            label="Country"
+                            required
+                        />
                     </div>
+                    <div className="w-45p md-w-30p py-2">
+                        <Input
+                            onChange={onMarchantCityChange}
+                            type="text"
+                            value={marchantCity}
+                            label="City"
+                            required
+                        />
+                    </div>
+                    <div className="w-45p md-w-30p py-2">
+                        <Input
+                            onChange={onMarchantPostCodeChange}
+                            type="text"
+                            value={marchantPostCode}
+                            label="Post Code"
+                            required
+                        />
+                    </div>
+                </div>
+                <div className="py-2">
+                    <Input
+                        onChange={onMarchantStreetChange}
+                        type="text"
+                        value={marchantStreet}
+                        label="Street Address"
+                        required
+                    />
                 </div>
 
                 <H1
@@ -136,24 +223,60 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                     Bill To
                 </H1>
                 <div className="py-2">
-                    <Input label="Client's Name" />
+                    <Input
+                        onChange={onClientNameChange}
+                        type="text"
+                        value={clientName}
+                        label="Client's Name"
+                        required
+                    />
                 </div>
                 <div className="py-2">
-                    <Input label="Client's Email" />
-                </div>
-                <div className="py-2">
-                    <Input label="Street Address" />
+                    <Input
+                        onChange={onClientEmailChange}
+                        type="text"
+                        value={clientEmail}
+                        label="Client's Email"
+                        required
+                    />
                 </div>
                 <div className="flex flex-wrap justify-between">
-                    <div className="w-45p md-w-30p py-2">
-                        <Input label="City" />
-                    </div>
-                    <div className="w-45p md-w-30p py-2">
-                        <Input label="Post Code" />
-                    </div>
                     <div className="w-100p md-w-30p py-2">
-                        <Input label="Country" />
+                        <Input
+                            onChange={onClientCountryChange}
+                            type="text"
+                            value={clientCountry}
+                            label="Country"
+                            required
+                        />
                     </div>
+                    <div className="w-45p md-w-30p py-2">
+                        <Input
+                            onChange={onClientCityChange}
+                            type="text"
+                            value={clientCity}
+                            label="City"
+                            required
+                        />
+                    </div>
+                    <div className="w-45p md-w-30p py-2">
+                        <Input
+                            onChange={onClientPostCodeChange}
+                            type="text"
+                            value={clientPostCode}
+                            label="Post Code"
+                            required
+                        />
+                    </div>
+                </div>
+                <div className="py-2">
+                    <Input
+                        onChange={onClientStreetChange}
+                        type="text"
+                        value={clientStreet}
+                        label="Street Address"
+                        required
+                    />
                 </div>
 
                 <div className="flex flex-wrap justify-between pt-6">
@@ -165,16 +288,31 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                         />
                     </div>
                     <div className="w-100p md-w-45p py-2">
-                        <Select label="Payment Terms">
-                            <option>One month time</option>
+                        <Select
+                            value={paymentTerms.toLocaleDateString()}
+                            label="Payment Terms"
+                            onChange={onPaymentTermsChange}
+                            required
+                        >
+                            {paymentTermsOptions.map((itm) => (
+                                <option
+                                    key={itm.label}
+                                    value={itm.value.toLocaleDateString()}
+                                >
+                                    {itm.label}
+                                </option>
+                            ))}
                         </Select>
                     </div>
                 </div>
 
                 <div className="py-2">
                     <Input
+                        value={transactionDescription}
+                        onChange={onTransactionDescriptionChange}
                         label="Transaction Description"
                         placeholder="Transaction Description"
+                        required
                     />
                 </div>
 
@@ -199,34 +337,64 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                     <Text className="action"></Text>
                 </ItemsListGrid>
 
-                <ItemsListGrid className="py-2">
-                    <div className="name">
-                        <Input placeholder="Item Name" />
-                    </div>
-                    <div className="qty">
-                        <Input placeholder="Qty" />
-                    </div>
-                    <div className="price">
-                        <Input placeholder="Price" />
-                    </div>
-                    <div className="total flex items-center justify-center">
-                        <Text>---------</Text>
-                    </div>
-                    <div className="action pt-2 md:pt-0 flex md:items-center justify-center">
-                        <FontAwesomeIcon icon={faTrashAlt} />
-                    </div>
-                </ItemsListGrid>
+                {itemListData.map((item) => {
+                    function onItemChange(
+                        event: ChangeEvent<HTMLInputElement>
+                    ) {
+                        onInvoiceItemInputChange(item.tempId, event)
+                    }
+                    return (
+                        <ItemsListGrid key={item.tempId} className="py-2">
+                            <div className="name">
+                                <Input
+                                    value={item.name}
+                                    name="name"
+                                    onChange={onItemChange}
+                                    required
+                                    placeholder="Item Name"
+                                />
+                            </div>
+                            <div className="qty">
+                                <Input
+                                    value={item.quantity}
+                                    name="quantity"
+                                    type="number"
+                                    onChange={onItemChange}
+                                    required
+                                    placeholder="Qty"
+                                />
+                            </div>
+                            <div className="price">
+                                <Input
+                                    value={item.price}
+                                    name="price"
+                                    type="number"
+                                    onChange={onItemChange}
+                                    required
+                                    placeholder="Price"
+                                />
+                            </div>
+                            <div className="total flex items-center justify-center">
+                                <Text>{item.total || '--------'}</Text>
+                            </div>
+                            <div className="action pt-2 md:pt-0 flex md:items-center justify-center">
+                                <FontAwesomeIcon icon={faTrashAlt} />
+                            </div>
+                        </ItemsListGrid>
+                    )
+                })}
                 <Button
                     type="button"
                     color={Colour.purpleBlue}
                     className="w-full my-2"
+                    onClick={onAddNewInvoiceItem}
                 >
                     + Add New Item
                 </Button>
             </div>
             {props.action === 'New' && (
                 <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
-                    <Button type="button" size="small">
+                    <Button onClick={onSaveInvoice} type="button" size="small">
                         Save
                     </Button>
                     <span className="px-2" />
@@ -234,7 +402,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                         Discard
                     </Button>
                     <span className="px-2" />
-                    <Button type="submit" size="small" primary>
+                    <Button type="button" size="small" primary>
                         Submit
                     </Button>
                 </ActionBar>
@@ -253,11 +421,121 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
         </StyledForm>
     )
 
+    function onInvoiceItemInputChange(
+        itemTempId: string,
+        event: ChangeEvent<HTMLInputElement>
+    ) {
+        const fieldName = event.target.name
+        const fieldValue =
+            fieldName === 'price' || fieldName === 'quantity'
+                ? Number(event.target.value)
+                : event.target.value
+
+        setItemListData(
+            itemListData.map((item) =>
+                item.tempId === itemTempId
+                    ? {
+                          ...item,
+                          [fieldName]: fieldValue,
+                          total:
+                              fieldName === 'price'
+                                  ? item.quantity * Number(fieldValue)
+                                  : fieldName === 'quantity'
+                                  ? item.price * Number(fieldValue)
+                                  : item.total,
+                      }
+                    : item
+            )
+        )
+    }
+    function onAddNewInvoiceItem() {
+        setItemListData([
+            ...itemListData,
+            {
+                tempId: `${uuidv4()}`,
+                name: '',
+                price: 0,
+                quantity: 0,
+                total: 0,
+            },
+        ])
+    }
+    function onMarchantCountryChange(event: ChangeEvent<HTMLInputElement>) {
+        setMarchantCountry(event.target.value)
+    }
+    function onMarchantCityChange(event: ChangeEvent<HTMLInputElement>) {
+        setMarchantCity(event.target.value)
+    }
+    function onMarchantPostCodeChange(event: ChangeEvent<HTMLInputElement>) {
+        setMarchantPostCode(event.target.value)
+    }
+    function onMarchantStreetChange(event: ChangeEvent<HTMLInputElement>) {
+        setMarchantStreet(event.target.value)
+    }
+    function onClientNameChange(event: ChangeEvent<HTMLInputElement>) {
+        setClientName(event.target.value)
+    }
+    function onClientEmailChange(event: ChangeEvent<HTMLInputElement>) {
+        setClientEmail(event.target.value)
+    }
+    function onClientCountryChange(event: ChangeEvent<HTMLInputElement>) {
+        setClientCountry(event.target.value)
+    }
+    function onClientCityChange(event: ChangeEvent<HTMLInputElement>) {
+        setClientCity(event.target.value)
+    }
+    function onClientPostCodeChange(event: ChangeEvent<HTMLInputElement>) {
+        setClientPostCode(event.target.value)
+    }
+    function onClientStreetChange(event: ChangeEvent<HTMLInputElement>) {
+        setClientStreet(event.target.value)
+    }
     function onInvoiceDateChange(value: Date) {
         setInvoiceDate(value)
     }
-    function onSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault()
+    function onTransactionDescriptionChange(
+        event: ChangeEvent<HTMLInputElement>
+    ) {
+        setTransactionDescription(event.target.value)
+    }
+    function onPaymentTermsChange(event: ChangeEvent<HTMLSelectElement>) {
+        setPaymentTerms(new Date(event.target.value))
+    }
+    async function onSubmit() {
+        const itemList = itemListData.map((item) => ({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            total: item.total,
+        }))
+        const invoiceInput: IInvoiceInput = {
+            marchantStreet,
+            marchantCity,
+            marchantPostCode,
+            marchantCountry,
+            clientName,
+            clientEmail,
+            clientStreet,
+            clientCity,
+            clientPostCode,
+            clientCountry,
+            invoiceDate,
+            paymentTerms,
+            transactionDescription,
+            status,
+            itemList,
+            totalAmount: itemListData.reduce(
+                (prev, curr) => prev + curr.total,
+                0
+            ),
+        }
+
+        const invoiceData = await CreateInvoiceService(invoiceInput)
+        console.log(invoiceData)
+    }
+    function onSaveInvoice() {
+        setInvoiceStatus(IInvoiceStatus.DRAFT)
+        onSubmit()
     }
 }
 
