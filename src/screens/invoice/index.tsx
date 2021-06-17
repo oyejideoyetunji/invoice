@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { RouteComponentProps } from 'react-router'
+import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import Button from '../../components/button'
 import { Colour } from '../../lib/colour'
@@ -15,8 +15,12 @@ import Badge, { getVariantColor } from '../../components/badge'
 import { Variant } from '../../lib/variants'
 import { ModalWrapper } from '../../components/modalWrapper'
 import InvoiceForm from '../../components/invoiceForm'
-import { IInvoice, IInvoiceStatus } from '../../lib/types'
-import { ReadInvoiceService } from '../../services/request'
+import { IInvoice, IInvoiceInput, IInvoiceStatus } from '../../lib/types'
+import {
+    DeleteInvoiceService,
+    ReadInvoiceService,
+    UpdateInvoiceService,
+} from '../../services/request'
 
 const Wrapper = styled.section`
     min-height: 100vh;
@@ -102,8 +106,7 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         let isMounted = true
         const getInvoice = async () => {
             const invoiceData = await ReadInvoiceService(id)
-            console.log(invoiceData)
-            if (isMounted && invoiceData.id) {
+            if (isMounted && invoiceData?.id) {
                 setInvoice(invoiceData)
             }
         }
@@ -150,13 +153,37 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                                 </Badge>
                             </div>
                             <div className="hidden md:flex items-center">
-                                <Button onClick={onShowInvoiceForm}>
-                                    Edit
-                                </Button>
+                                {invoice.status === IInvoiceStatus.DRAFT && (
+                                    <Button onClick={onShowInvoiceForm}>
+                                        Edit
+                                    </Button>
+                                )}
                                 <span className="px-2" />
-                                <Button color={Colour.danger}>Delete</Button>
+                                {invoice.status !== IInvoiceStatus.PENDING && (
+                                    <Button
+                                        onClick={onDeleteInvoice}
+                                        color={Colour.danger}
+                                    >
+                                        Delete
+                                    </Button>
+                                )}
                                 <span className="px-2" />
-                                <Button primary>Mark as paid</Button>
+                                {invoice.status === IInvoiceStatus.DRAFT ? (
+                                    <Button
+                                        onClick={onMoveInvoiceToPending}
+                                        color={Colour.warningLight}
+                                    >
+                                        Move to Pending
+                                    </Button>
+                                ) : invoice.status ===
+                                  IInvoiceStatus.PENDING ? (
+                                    <Button
+                                        onClick={onMarkInvoiceAsPaid}
+                                        primary
+                                    >
+                                        Mark as paid
+                                    </Button>
+                                ) : null}
                             </div>
                         </ScreenCard>
                         <InvoiceDetailsCard className="px-3 py-6 sm:px-6 mb-32">
@@ -304,7 +331,7 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                     </span>
                 )}
             </Wrapper>
-            {showInvoiceForm && invoice && invoice.id && (
+            {showInvoiceForm && invoice && (
                 <ModalWrapper
                     modalPosition="fixed"
                     contentPosition="left"
@@ -323,6 +350,7 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                             onDiscard={onCloseInvoiceForm}
                             action="Edit"
                             invoiceData={invoice}
+                            onSubmitInvoiceUpdate={onSubmitInvoiceUpdate}
                         />
                     </FormWrapper>
                 </ModalWrapper>
@@ -335,6 +363,57 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     }
     function onCloseInvoiceForm() {
         setShowInvoiceForm(false)
+    }
+    async function onSubmitInvoiceUpdate(
+        inputData: IInvoiceInput,
+        invoiceId: string
+    ) {
+        const invoiceData = await UpdateInvoiceService(inputData, invoiceId)
+        if (invoiceData && invoiceData.id) {
+            onCloseInvoiceForm()
+            setInvoice(invoiceData)
+        } else if (invoiceData && invoiceData.message) {
+            console.log(invoiceData)
+        }
+    }
+    async function onMarkInvoiceAsPaid() {
+        if (invoice) {
+            const inputData = { ...invoice, status: IInvoiceStatus.PAID }
+            const invoiceData = await UpdateInvoiceService(
+                inputData,
+                invoice.id
+            )
+
+            if (invoiceData && invoiceData.id) {
+                setInvoice(invoiceData)
+            } else if (invoiceData && invoiceData.message) {
+                console.log(invoiceData)
+            }
+        }
+    }
+
+    async function onMoveInvoiceToPending() {
+        if (invoice) {
+            const inputData = { ...invoice, status: IInvoiceStatus.PENDING }
+            const invoiceData = await UpdateInvoiceService(
+                inputData,
+                invoice.id
+            )
+
+            if (invoiceData && invoiceData.id) {
+                setInvoice(invoiceData)
+            } else if (invoiceData && invoiceData.message) {
+                console.log(invoiceData)
+            }
+        }
+    }
+
+    async function onDeleteInvoice() {
+        const data = await DeleteInvoiceService(id)
+
+        if (data && data?.message) {
+            props.history.push('/')
+        }
     }
 }
 

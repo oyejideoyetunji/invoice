@@ -9,14 +9,17 @@ import {
     faPlusCircle,
     faTimes,
 } from '@fortawesome/free-solid-svg-icons'
-import { Link } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { getUrlString, Routes } from '../../components/navigation/routes'
 import { ModalWrapper } from '../../components/modalWrapper'
 import InvoiceForm from '../../components/invoiceForm'
 import Badge, { getVariantColor } from '../../components/badge'
 import { Variant } from '../../lib/variants'
-import { ReadAllInvoiceService } from '../../services/request'
-import { IInvoice, IInvoiceStatus } from '../../lib/types'
+import {
+    CreateInvoiceService,
+    ReadAllInvoiceService,
+} from '../../services/request'
+import { IInvoice, IInvoiceInput, IInvoiceStatus } from '../../lib/types'
 
 const Wrapper = styled.section`
     min-height: 100vh;
@@ -175,7 +178,7 @@ const IconWrapper = styled.span<{ size?: string }>`
     height: fit-content;
 `
 
-const Invoices: FC = () => {
+const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     const [showInvoiceForm, setShowInvoiceForm] = useState<boolean>(false)
     const [invoices, setInvoices] = useState<IInvoice[]>()
 
@@ -183,7 +186,6 @@ const Invoices: FC = () => {
         let isMounted = true
         const getAllInvoices = async () => {
             const invoicesData = await ReadAllInvoiceService()
-            console.log(invoicesData)
             if (isMounted && invoicesData.length) {
                 setInvoices(invoicesData)
             }
@@ -317,6 +319,7 @@ const Invoices: FC = () => {
                         <InvoiceForm
                             onDiscard={onCloseInvoiceForm}
                             action="New"
+                            onSubmitNewInvoice={onSubmitNewInvoice}
                         />
                     </FormWrapper>
                 </ModalWrapper>
@@ -329,6 +332,18 @@ const Invoices: FC = () => {
     }
     function onCloseInvoiceForm() {
         setShowInvoiceForm(false)
+    }
+    async function onSubmitNewInvoice(inputData: IInvoiceInput) {
+        const invoiceData = await CreateInvoiceService(inputData)
+        if (invoiceData && invoiceData.id) {
+            const invoicesData = await ReadAllInvoiceService()
+            if (invoicesData && invoicesData.length) {
+                onCloseInvoiceForm()
+                setInvoices(invoicesData)
+            }
+        } else if (invoiceData && invoiceData.message) {
+            console.log(invoiceData)
+        }
     }
 }
 

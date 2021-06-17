@@ -4,9 +4,10 @@ export enum TimeDifference {
     DAY = 'day',
 }
 
-export function getTimeFromNow(
+export function getTimeFromDate(
     difference: number,
-    difType: TimeDifference
+    difType: TimeDifference,
+    initialDate?: Date
 ): Date | null {
     if (
         typeof difference !== 'number' ||
@@ -24,8 +25,11 @@ export function getTimeFromNow(
     differenceMap[difType] = difference
 
     return new Date(
-        new Date().getFullYear() + differenceMap.year,
-        new Date().getMonth() + differenceMap.month,
-        new Date().getDate() + differenceMap.day
+        (initialDate ? new Date(initialDate) : new Date()).getFullYear() +
+            differenceMap.year,
+        (initialDate ? new Date(initialDate) : new Date()).getMonth() +
+            differenceMap.month,
+        (initialDate ? new Date(initialDate) : new Date()).getDate() +
+            differenceMap.day
     )
 }

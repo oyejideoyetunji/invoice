@@ -10,17 +10,13 @@ import {
     Option,
     IInvoice,
 } from '../../lib/types'
-import { getTimeFromNow, TimeDifference } from '../../lib/utils/dateTime'
+import { getTimeFromDate, TimeDifference } from '../../lib/utils/dateTime'
 import Button from '../button'
 import Calendar from '../calendar'
 import { Input } from '../input'
 import { Select } from '../select'
 import { H1, Text } from '../typography'
 import { v4 as uuidv4 } from 'uuid'
-import {
-    CreateInvoiceService,
-    UpdateInvoiceService,
-} from '../../services/request'
 
 const StyledForm = styled.form`
     width: 100%;
@@ -102,29 +98,6 @@ const ItemsListGrid = styled.div`
     }
 `
 
-const paymentTermsOptions: Option<Date>[] = [
-    {
-        label: 'Immediately',
-        value: new Date(),
-    },
-    {
-        label: 'Next two days',
-        value: getTimeFromNow(2, TimeDifference.DAY) as Date,
-    },
-    {
-        label: 'Next Seven days',
-        value: getTimeFromNow(7, TimeDifference.DAY) as Date,
-    },
-    {
-        label: 'Next Two weeks',
-        value: getTimeFromNow(14, TimeDifference.DAY) as Date,
-    },
-    {
-        label: 'Next One Month',
-        value: getTimeFromNow(1, TimeDifference.MONTH) as Date,
-    },
-]
-
 const defaultItemListData = [
     {
         tempId: `${uuidv4()}`,
@@ -139,6 +112,8 @@ export interface InvoiceFormProps {
     action: 'New' | 'Edit'
     invoiceData?: IInvoice
     onDiscard?(): void
+    onSubmitNewInvoice?(inputData: IInvoiceInput): void
+    onSubmitInvoiceUpdate?(inputData: IInvoiceInput, id: string): void
 }
 
 const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
@@ -176,16 +151,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
         transactionDescription,
         setTransactionDescription,
     ] = useState<string>(props?.invoiceData?.transactionDescription || '')
-    const [invoiceDate, setInvoiceDate] = useState<Date>(
-        props?.invoiceData?.invoiceDate
-            ? new Date(props?.invoiceData?.invoiceDate)
-            : new Date()
-    )
-    const [paymentTerms, setPaymentTerms] = useState<Date>(
-        props?.invoiceData?.paymentTerms
-            ? new Date(props?.invoiceData?.paymentTerms)
-            : new Date()
-    )
+
     const [itemListData, setItemListData] = useState<ILabeledInvoiceItem[]>(
         props?.invoiceData?.itemList?.map((itm) => {
             delete itm._id
@@ -195,8 +161,54 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
             }
         }) || defaultItemListData
     )
+
     const [status, setInvoiceStatus] = useState<IInvoiceStatus>(
         props?.invoiceData?.status || IInvoiceStatus.DRAFT
+    )
+
+    const [invoiceDate, setInvoiceDate] = useState<Date>(
+        props?.invoiceData?.invoiceDate
+            ? new Date(props?.invoiceData?.invoiceDate)
+            : new Date()
+    )
+
+    const paymentTermsOptions: Option<Date>[] = [
+        {
+            label: 'Immediately',
+            value: invoiceDate,
+        },
+        {
+            label: 'Next two days',
+            value: getTimeFromDate(2, TimeDifference.DAY, invoiceDate) as Date,
+        },
+        {
+            label: 'Next Seven days',
+            value: getTimeFromDate(7, TimeDifference.DAY, invoiceDate) as Date,
+        },
+        {
+            label: 'Next Two weeks',
+            value: getTimeFromDate(14, TimeDifference.DAY, invoiceDate) as Date,
+        },
+        {
+            label: 'Next One Month',
+            value: getTimeFromDate(
+                1,
+                TimeDifference.MONTH,
+                invoiceDate
+            ) as Date,
+        },
+    ]
+
+    const [paymentTerms, setPaymentTerms] = useState<Date>(
+        props?.invoiceData?.paymentTerms
+            ? (paymentTermsOptions.find(
+                  (opt) =>
+                      opt.value.toLocaleDateString() ===
+                      new Date(
+                          props?.invoiceData?.paymentTerms as Date
+                      ).toLocaleDateString()
+              )?.value as Date) || paymentTermsOptions[0].value
+            : paymentTermsOptions[0].value
     )
 
     return (
@@ -382,6 +394,9 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                     ) {
                         onInvoiceItemInputChange(item.tempId, event)
                     }
+                    function onDeleteItem() {
+                        onDeleteInvoiceListItem(item.tempId)
+                    }
                     return (
                         <ItemsListGrid key={item.tempId} className="py-2">
                             <div className="name">
@@ -416,8 +431,17 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                             <div className="total flex items-center justify-center">
                                 <Text>{item.total || '--------'}</Text>
                             </div>
-                            <div className="action pt-2 md:pt-0 flex md:items-center justify-center">
-                                <FontAwesomeIcon icon={faTrashAlt} />
+                            <div
+                                className={`action pt-2 md:pt-0 flex md:items-center justify-center ${
+                                    itemListData.length > 1
+                                        ? 'cursor-pointer'
+                                        : 'cursor-not-allowed'
+                                }`}
+                            >
+                                <FontAwesomeIcon
+                                    onClick={onDeleteItem}
+                                    icon={faTrashAlt}
+                                />
                             </div>
                         </ItemsListGrid>
                     )
@@ -451,7 +475,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                     </Button>
                     <span className="px-2" />
                     <Button
-                        onClick={onSubmitInvoice}
+                        onClick={onSaveInvoiceAsPending}
                         type="button"
                         size="small"
                         primary
@@ -523,6 +547,11 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
             },
         ])
     }
+    function onDeleteInvoiceListItem(tempId: string) {
+        if (itemListData.length > 1) {
+            setItemListData(itemListData.filter((itm) => itm.tempId !== tempId))
+        }
+    }
     function onMarchantCountryChange(event: ChangeEvent<HTMLInputElement>) {
         setMarchantCountry(event.target.value)
     }
@@ -563,6 +592,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
     }
     function onPaymentTermsChange(event: ChangeEvent<HTMLSelectElement>) {
         setPaymentTerms(new Date(event.target.value))
+        console.log(paymentTerms, '\n', event.target.value)
     }
     function getSubmittedData(): IInvoiceInput {
         const itemList = itemListData.map((item) => ({
@@ -595,43 +625,24 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
         }
     }
     async function onSaveInvoiceAsDraft() {
-        setInvoiceStatus(IInvoiceStatus.DRAFT)
-        const invoiceInput = getSubmittedData()
-
-        const invoiceData = await CreateInvoiceService(invoiceInput)
-        if (invoiceData && invoiceData.id) {
-            console.log(invoiceData)
-        } else if (invoiceData && invoiceData.message) {
-            console.log(invoiceData)
+        if (props.onSubmitNewInvoice) {
+            setInvoiceStatus(IInvoiceStatus.DRAFT)
+            const invoiceInput = getSubmittedData()
+            props.onSubmitNewInvoice(invoiceInput)
         }
     }
-    async function onSubmitInvoice() {
-        setInvoiceStatus(IInvoiceStatus.PENDING)
-        const invoiceInput = getSubmittedData()
-
-        const invoiceData = await CreateInvoiceService(invoiceInput)
-        if (invoiceData && invoiceData.id) {
-            console.log(invoiceData)
-        } else if (invoiceData && invoiceData.message) {
-            console.log(invoiceData)
+    async function onSaveInvoiceAsPending() {
+        if (props.onSubmitNewInvoice) {
+            setInvoiceStatus(IInvoiceStatus.PENDING)
+            const invoiceInput = getSubmittedData()
+            props.onSubmitNewInvoice(invoiceInput)
         }
     }
     async function onSaveInvoiceChanges() {
-        if (props.invoiceData?.status) {
+        if (props.invoiceData?.status && props.onSubmitInvoiceUpdate) {
             setInvoiceStatus(props.invoiceData?.status)
             const invoiceInput = getSubmittedData()
-
-            console.log(invoiceInput)
-
-            const invoiceData = await UpdateInvoiceService(
-                invoiceInput,
-                props.invoiceData.id
-            )
-            if (invoiceData && invoiceData.id) {
-                console.log(invoiceData)
-            } else if (invoiceData && invoiceData.message) {
-                console.log(invoiceData)
-            }
+            props.onSubmitInvoiceUpdate(invoiceInput, props.invoiceData.id)
         }
     }
 }

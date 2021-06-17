@@ -13,6 +13,7 @@ export enum Colour {
     whiteSmoke = '#f1f4fa',
     whiteSmokeAlt = '#ffffef',
     warning = '#ff6701',
+    warningLight = '#fa802e',
     warningShade = '#fcecdd',
     successShade = '#e8ffff',
     success = '#41aea9',
