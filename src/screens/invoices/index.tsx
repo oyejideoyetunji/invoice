@@ -7,6 +7,7 @@ import {
     faChevronRight,
     faCircle,
     faPlusCircle,
+    faSpinner,
     faTimes,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link, RouteComponentProps } from 'react-router-dom'
@@ -177,17 +178,26 @@ const IconWrapper = styled.span<{ size?: string }>`
     width: fit-content;
     height: fit-content;
 `
+const StatusWrapper = styled.section`
+    margin: 16px 0;
+    padding: 16px;
+    height: calc(70vh);
+    color: ${Colour.primaryBlue};
+`
 
 const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     const [showInvoiceForm, setShowInvoiceForm] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
     const [invoices, setInvoices] = useState<IInvoice[]>()
 
     useEffect(() => {
         let isMounted = true
         const getAllInvoices = async () => {
+            setLoading(true)
             const invoicesData = await ReadAllInvoiceService()
             if (isMounted && invoicesData.length) {
                 setInvoices(invoicesData)
+                setLoading(false)
             }
         }
         getAllInvoices()
@@ -205,12 +215,17 @@ const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                             <h1 className="text-xl sm:text-2xl md:text-4xl leading-snug md:leading-normal">
                                 Invoices
                             </h1>
-                            <span className="hidden md:inline text-sm">
-                                There are 7 total invoices
-                            </span>
-                            <span className="md:hidden text-xs">
-                                7 total invoices
-                            </span>
+                            {invoices && invoices.length > 0 && (
+                                <>
+                                    <span className="hidden md:inline text-sm">
+                                        There are {invoices.length} total
+                                        invoices
+                                    </span>
+                                    <span className="md:hidden text-xs">
+                                        {invoices.length} total invoices
+                                    </span>
+                                </>
+                            )}
                         </div>
                         <div className="flex items-center">
                             <Button
@@ -238,68 +253,90 @@ const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                     </div>
                 </TopBar>
 
-                <InvoiceListWrapper>
-                    {invoices &&
-                        invoices.length > 0 &&
-                        invoices.map((invoice) => (
-                            <Link
-                                to={`${getUrlString(Routes.Invoice)}${
-                                    invoice.id
-                                }`}
-                                key={invoice.id}
-                            >
-                                <InvoiceCardWrapper>
-                                    <span className="invoice-id text-sm md:text-base font-bold md:font-medium">
-                                        {invoice.invoiceNumber || '#XARTG012'}
-                                    </span>
-                                    <span className="invoice-date text-sm md:text-base font-light">
-                                        Due{' '}
-                                        {new Date(
-                                            invoice.paymentTerms
-                                        ).toLocaleDateString() || '19 Aug 2021'}
-                                    </span>
-                                    <span className="invoice-cus-name text-sm md:text-base font-light">
-                                        {invoice.clientName || 'Alex Grim'}
-                                    </span>
-                                    <span className="invoice-amount text-base md:text-lg font-bold md:font-medium">
-                                        {`NGN${
-                                            invoice.totalAmount || 'NGN5236'
-                                        }`}
-                                    </span>
-                                    <div className="invoice-status">
-                                        <Badge
-                                            variantColor={getVariantColor(
-                                                invoice.status ===
-                                                    IInvoiceStatus.PENDING
-                                                    ? Variant.Warning
-                                                    : invoice.status ===
-                                                      IInvoiceStatus.DRAFT
-                                                    ? Variant.Neutral
-                                                    : Variant.Success
-                                            )}
-                                        >
-                                            <IconWrapper
-                                                className="pr-1"
-                                                size="8px"
-                                            >
-                                                <FontAwesomeIcon
-                                                    icon={faCircle}
-                                                />
-                                            </IconWrapper>
-                                            <span className="text-sm">
-                                                {invoice.status.toUpperCase()}
-                                            </span>
-                                        </Badge>
-                                        <span className="pl-4 cursor-pointer hidden md:inline-block">
-                                            <FontAwesomeIcon
-                                                icon={faChevronRight}
-                                            />
+                {loading ? (
+                    <StatusWrapper className="w-full flex items-center justify-center">
+                        <FontAwesomeIcon
+                            size="5x"
+                            icon={faSpinner}
+                            className="fa-spin"
+                        />
+                    </StatusWrapper>
+                ) : invoices ? (
+                    invoices.length > 0 ? (
+                        <InvoiceListWrapper>
+                            {invoices.map((invoice) => (
+                                <Link
+                                    to={`${getUrlString(Routes.Invoice)}${
+                                        invoice.id
+                                    }`}
+                                    key={invoice.id}
+                                >
+                                    <InvoiceCardWrapper>
+                                        <span className="invoice-id text-sm md:text-base font-bold md:font-medium">
+                                            {invoice.invoiceNumber ||
+                                                '#XARTG012'}
                                         </span>
-                                    </div>
-                                </InvoiceCardWrapper>
-                            </Link>
-                        ))}
-                </InvoiceListWrapper>
+                                        <span className="invoice-date text-sm md:text-base font-light">
+                                            Due{' '}
+                                            {new Date(
+                                                invoice.paymentTerms
+                                            ).toLocaleDateString() ||
+                                                '19 Aug 2021'}
+                                        </span>
+                                        <span className="invoice-cus-name text-sm md:text-base font-light">
+                                            {invoice.clientName || 'Alex Grim'}
+                                        </span>
+                                        <span className="invoice-amount text-base md:text-lg font-bold md:font-medium">
+                                            {`NGN${
+                                                invoice.totalAmount || 'NGN5236'
+                                            }`}
+                                        </span>
+                                        <div className="invoice-status">
+                                            <Badge
+                                                variantColor={getVariantColor(
+                                                    invoice.status ===
+                                                        IInvoiceStatus.PENDING
+                                                        ? Variant.Warning
+                                                        : invoice.status ===
+                                                          IInvoiceStatus.DRAFT
+                                                        ? Variant.Neutral
+                                                        : Variant.Success
+                                                )}
+                                            >
+                                                <IconWrapper
+                                                    className="pr-1"
+                                                    size="8px"
+                                                >
+                                                    <FontAwesomeIcon
+                                                        icon={faCircle}
+                                                    />
+                                                </IconWrapper>
+                                                <span className="text-sm">
+                                                    {invoice.status.toUpperCase()}
+                                                </span>
+                                            </Badge>
+                                            <span className="pl-4 cursor-pointer hidden md:inline-block">
+                                                <FontAwesomeIcon
+                                                    icon={faChevronRight}
+                                                />
+                                            </span>
+                                        </div>
+                                    </InvoiceCardWrapper>
+                                </Link>
+                            ))}
+                        </InvoiceListWrapper>
+                    ) : (
+                        <StatusWrapper className="w-full flex items-center justify-center">
+                            Guess you have no invoice at the moment, Your
+                            invoices will be here
+                        </StatusWrapper>
+                    )
+                ) : (
+                    <StatusWrapper className="w-full flex items-center justify-center">
+                        Oops! An error occurred while loading your List of
+                        invoices
+                    </StatusWrapper>
+                )}
             </Wrapper>
             {showInvoiceForm && (
                 <ModalWrapper

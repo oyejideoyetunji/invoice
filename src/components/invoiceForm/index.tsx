@@ -112,51 +112,33 @@ export interface InvoiceFormProps {
     action: 'New' | 'Edit'
     invoiceData?: IInvoice
     onDiscard?(): void
-    onSubmitNewInvoice?(inputData: IInvoiceInput): void
-    onSubmitInvoiceUpdate?(inputData: IInvoiceInput, id: string): void
+    onSubmitNewInvoice?(inputData: IInvoiceInput): Promise<void>
+    onSubmitInvoiceUpdate?(inputData: IInvoiceInput, id: string): Promise<void>
 }
 
 const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
-    const [marchantCountry, setMarchantCountry] = useState<string>(
-        props?.invoiceData?.marchantCountry || ''
-    )
-    const [marchantCity, setMarchantCity] = useState<string>(
-        props?.invoiceData?.marchantCity || ''
-    )
-    const [marchantPostCode, setMarchantPostCode] = useState<string>(
-        props?.invoiceData?.marchantPostCode || ''
-    )
-    const [marchantStreet, setMarchantStreet] = useState<string>(
-        props?.invoiceData?.marchantStreet || ''
-    )
-    const [clientName, setClientName] = useState<string>(
-        props?.invoiceData?.clientName || ''
-    )
-    const [clientEmail, setClientEmail] = useState<string>(
-        props?.invoiceData?.clientEmail || ''
-    )
-    const [clientCountry, setClientCountry] = useState<string>(
-        props?.invoiceData?.clientCountry || ''
-    )
-    const [clientCity, setClientCity] = useState<string>(
-        props?.invoiceData?.clientCity || ''
-    )
-    const [clientPostCode, setClientPostCode] = useState<string>(
-        props?.invoiceData?.clientPostCode || ''
-    )
-    const [clientStreet, setClientStreet] = useState<string>(
-        props?.invoiceData?.clientStreet || ''
-    )
-    const [
-        transactionDescription,
-        setTransactionDescription,
-    ] = useState<string>(props?.invoiceData?.transactionDescription || '')
+    const [textValues, setTextValues] = useState({
+        marchantCountry: props?.invoiceData?.marchantCountry || '',
+        marchantCity: props?.invoiceData?.marchantCity || '',
+        marchantPostCode: props?.invoiceData?.marchantPostCode || '',
+        marchantStreet: props?.invoiceData?.marchantStreet || '',
+        clientName: props?.invoiceData?.clientName || '',
+        clientEmail: props?.invoiceData?.clientEmail || '',
+        clientCountry: props?.invoiceData?.clientCountry || '',
+        clientCity: props?.invoiceData?.clientCity || '',
+        clientPostCode: props?.invoiceData?.clientPostCode || '',
+        clientStreet: props?.invoiceData?.clientStreet || '',
+        transactionDescription:
+            props?.invoiceData?.transactionDescription || '',
+    })
 
     const [itemListData, setItemListData] = useState<ILabeledInvoiceItem[]>(
         props?.invoiceData?.itemList?.map((itm) => {
-            delete itm._id
             return {
-                ...itm,
+                name: itm.name,
+                price: itm.price,
+                quantity: itm.quantity,
+                total: itm.total,
                 tempId: `${uuidv4()}`,
             }
         }) || defaultItemListData
@@ -229,27 +211,30 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                 <div className="flex flex-wrap justify-between">
                     <div className="w-100p md-w-30p py-2">
                         <Input
-                            onChange={onMarchantCountryChange}
+                            onChange={onTextValueChange}
                             type="text"
-                            value={marchantCountry}
+                            name="marchantCountry"
+                            value={textValues.marchantCountry}
                             label="Country"
                             required
                         />
                     </div>
                     <div className="w-45p md-w-30p py-2">
                         <Input
-                            onChange={onMarchantCityChange}
+                            onChange={onTextValueChange}
                             type="text"
-                            value={marchantCity}
+                            name="marchantCity"
+                            value={textValues.marchantCity}
                             label="City"
                             required
                         />
                     </div>
                     <div className="w-45p md-w-30p py-2">
                         <Input
-                            onChange={onMarchantPostCodeChange}
+                            onChange={onTextValueChange}
                             type="text"
-                            value={marchantPostCode}
+                            name="marchantPostCode"
+                            value={textValues.marchantPostCode}
                             label="Post Code"
                             required
                         />
@@ -257,9 +242,10 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                 </div>
                 <div className="py-2">
                     <Input
-                        onChange={onMarchantStreetChange}
+                        onChange={onTextValueChange}
                         type="text"
-                        value={marchantStreet}
+                        name="marchantStreet"
+                        value={textValues.marchantStreet}
                         label="Street Address"
                         required
                     />
@@ -275,18 +261,20 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                 </H1>
                 <div className="py-2">
                     <Input
-                        onChange={onClientNameChange}
+                        onChange={onTextValueChange}
                         type="text"
-                        value={clientName}
+                        name="clientName"
+                        value={textValues.clientName}
                         label="Client's Name"
                         required
                     />
                 </div>
                 <div className="py-2">
                     <Input
-                        onChange={onClientEmailChange}
+                        onChange={onTextValueChange}
                         type="text"
-                        value={clientEmail}
+                        name="clientEmail"
+                        value={textValues.clientEmail}
                         label="Client's Email"
                         required
                     />
@@ -294,27 +282,30 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                 <div className="flex flex-wrap justify-between">
                     <div className="w-100p md-w-30p py-2">
                         <Input
-                            onChange={onClientCountryChange}
+                            onChange={onTextValueChange}
                             type="text"
-                            value={clientCountry}
+                            name="clientCountry"
+                            value={textValues.clientCountry}
                             label="Country"
                             required
                         />
                     </div>
                     <div className="w-45p md-w-30p py-2">
                         <Input
-                            onChange={onClientCityChange}
+                            onChange={onTextValueChange}
                             type="text"
-                            value={clientCity}
+                            name="clientCity"
+                            value={textValues.clientCity}
                             label="City"
                             required
                         />
                     </div>
                     <div className="w-45p md-w-30p py-2">
                         <Input
-                            onChange={onClientPostCodeChange}
+                            onChange={onTextValueChange}
                             type="text"
-                            value={clientPostCode}
+                            name="clientPostCode"
+                            value={textValues.clientPostCode}
                             label="Post Code"
                             required
                         />
@@ -322,9 +313,10 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                 </div>
                 <div className="py-2">
                     <Input
-                        onChange={onClientStreetChange}
+                        onChange={onTextValueChange}
                         type="text"
-                        value={clientStreet}
+                        name="clientStreet"
+                        value={textValues.clientStreet}
                         label="Street Address"
                         required
                     />
@@ -359,8 +351,9 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
 
                 <div className="py-2">
                     <Input
-                        value={transactionDescription}
-                        onChange={onTransactionDescriptionChange}
+                        name="transactionDescription"
+                        value={textValues.transactionDescription}
+                        onChange={onTextValueChange}
                         label="Transaction Description"
                         placeholder="Transaction Description"
                         required
@@ -457,11 +450,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
             </div>
             {props.action === 'New' && (
                 <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
-                    <Button
-                        onClick={onSaveInvoiceAsDraft}
-                        type="button"
-                        size="small"
-                    >
+                    <Button onClick={onSaveInvoice} type="button" size="small">
                         Save
                     </Button>
                     <span className="px-2" />
@@ -508,6 +497,20 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
         </StyledForm>
     )
 
+    function onTextValueChange(event: ChangeEvent<HTMLInputElement>) {
+        setTextValues({
+            ...textValues,
+            [event.target.name]: event.target.value,
+        })
+    }
+
+    function onInvoiceDateChange(value: Date) {
+        setInvoiceDate(value)
+    }
+    function onPaymentTermsChange(event: ChangeEvent<HTMLSelectElement>) {
+        setPaymentTerms(new Date(event.target.value))
+    }
+
     function onInvoiceItemInputChange(
         itemTempId: string,
         event: ChangeEvent<HTMLInputElement>
@@ -535,6 +538,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
             )
         )
     }
+
     function onAddNewInvoiceItem() {
         setItemListData([
             ...itemListData,
@@ -547,53 +551,13 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
             },
         ])
     }
+
     function onDeleteInvoiceListItem(tempId: string) {
         if (itemListData.length > 1) {
             setItemListData(itemListData.filter((itm) => itm.tempId !== tempId))
         }
     }
-    function onMarchantCountryChange(event: ChangeEvent<HTMLInputElement>) {
-        setMarchantCountry(event.target.value)
-    }
-    function onMarchantCityChange(event: ChangeEvent<HTMLInputElement>) {
-        setMarchantCity(event.target.value)
-    }
-    function onMarchantPostCodeChange(event: ChangeEvent<HTMLInputElement>) {
-        setMarchantPostCode(event.target.value)
-    }
-    function onMarchantStreetChange(event: ChangeEvent<HTMLInputElement>) {
-        setMarchantStreet(event.target.value)
-    }
-    function onClientNameChange(event: ChangeEvent<HTMLInputElement>) {
-        setClientName(event.target.value)
-    }
-    function onClientEmailChange(event: ChangeEvent<HTMLInputElement>) {
-        setClientEmail(event.target.value)
-    }
-    function onClientCountryChange(event: ChangeEvent<HTMLInputElement>) {
-        setClientCountry(event.target.value)
-    }
-    function onClientCityChange(event: ChangeEvent<HTMLInputElement>) {
-        setClientCity(event.target.value)
-    }
-    function onClientPostCodeChange(event: ChangeEvent<HTMLInputElement>) {
-        setClientPostCode(event.target.value)
-    }
-    function onClientStreetChange(event: ChangeEvent<HTMLInputElement>) {
-        setClientStreet(event.target.value)
-    }
-    function onInvoiceDateChange(value: Date) {
-        setInvoiceDate(value)
-    }
-    function onTransactionDescriptionChange(
-        event: ChangeEvent<HTMLInputElement>
-    ) {
-        setTransactionDescription(event.target.value)
-    }
-    function onPaymentTermsChange(event: ChangeEvent<HTMLSelectElement>) {
-        setPaymentTerms(new Date(event.target.value))
-        console.log(paymentTerms, '\n', event.target.value)
-    }
+
     function getSubmittedData(): IInvoiceInput {
         const itemList = itemListData.map((item) => ({
             name: item.name,
@@ -603,19 +567,9 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
         }))
 
         return {
-            marchantStreet,
-            marchantCity,
-            marchantPostCode,
-            marchantCountry,
-            clientName,
-            clientEmail,
-            clientStreet,
-            clientCity,
-            clientPostCode,
-            clientCountry,
+            ...textValues,
             invoiceDate,
             paymentTerms,
-            transactionDescription,
             status,
             itemList,
             totalAmount: itemListData.reduce(
@@ -624,25 +578,26 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
             ),
         }
     }
-    async function onSaveInvoiceAsDraft() {
+
+    async function onSaveInvoice() {
         if (props.onSubmitNewInvoice) {
-            setInvoiceStatus(IInvoiceStatus.DRAFT)
             const invoiceInput = getSubmittedData()
-            props.onSubmitNewInvoice(invoiceInput)
+            await props.onSubmitNewInvoice(invoiceInput)
         }
     }
+
     async function onSaveInvoiceAsPending() {
-        if (props.onSubmitNewInvoice) {
-            setInvoiceStatus(IInvoiceStatus.PENDING)
-            const invoiceInput = getSubmittedData()
-            props.onSubmitNewInvoice(invoiceInput)
-        }
+        setInvoiceStatus(IInvoiceStatus.PENDING)
+        await onSaveInvoice()
     }
+
     async function onSaveInvoiceChanges() {
-        if (props.invoiceData?.status && props.onSubmitInvoiceUpdate) {
-            setInvoiceStatus(props.invoiceData?.status)
+        if (props.invoiceData && props.onSubmitInvoiceUpdate) {
             const invoiceInput = getSubmittedData()
-            props.onSubmitInvoiceUpdate(invoiceInput, props.invoiceData.id)
+            await props.onSubmitInvoiceUpdate(
+                invoiceInput,
+                props.invoiceData.id
+            )
         }
     }
 }

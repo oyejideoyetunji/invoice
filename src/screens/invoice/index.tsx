@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faArrowLeft,
     faCircle,
+    faSpinner,
     faTimes,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
@@ -94,9 +95,16 @@ const CloseModalButtonWrapper = styled.span`
     padding: 4px;
     cursor: pointer;
 `
+const StatusWrapper = styled.section`
+    margin: 16px 0;
+    padding: 16px;
+    height: calc(70vh);
+    color: ${Colour.primaryBlue};
+`
 
 const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     const [showInvoiceForm, setShowInvoiceForm] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
     const [invoice, setInvoice] = useState<IInvoice>()
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -105,9 +113,11 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     useEffect(() => {
         let isMounted = true
         const getInvoice = async () => {
+            setLoading(true)
             const invoiceData = await ReadInvoiceService(id)
             if (isMounted && invoiceData?.id) {
                 setInvoice(invoiceData)
+                setLoading(false)
             }
         }
         getInvoice()
@@ -128,7 +138,15 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                     </div>
                     <span>Go back</span>
                 </div>
-                {invoice && invoice.id ? (
+                {loading ? (
+                    <StatusWrapper className="w-full flex items-center justify-center">
+                        <FontAwesomeIcon
+                            size="5x"
+                            icon={faSpinner}
+                            className="fa-spin"
+                        />
+                    </StatusWrapper>
+                ) : invoice && invoice.id ? (
                     <>
                         <ScreenCard className="flex p-6 justify-between my-4">
                             <div className="w-full md:w-auto flex items-center justify-between md:justify-start">
@@ -326,9 +344,9 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                         </MobileActionBar>
                     </>
                 ) : (
-                    <span className="pb-1 text-sm md:text-base font-bold md:font-medium">
-                        Invoice not found
-                    </span>
+                    <StatusWrapper className="w-full flex items-center justify-center">
+                        Oops! Invoice not found
+                    </StatusWrapper>
                 )}
             </Wrapper>
             {showInvoiceForm && invoice && (
