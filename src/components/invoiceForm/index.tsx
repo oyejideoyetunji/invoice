@@ -1,4 +1,4 @@
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faSpinner, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { ChangeEvent, FC, useState } from 'react'
 import styled from 'styled-components'
@@ -17,6 +17,12 @@ import { Input } from '../input'
 import { Select } from '../select'
 import { H1, Text } from '../typography'
 import { v4 as uuidv4 } from 'uuid'
+import {
+    isEmailInvalid,
+    isEmpty,
+    isInvalidString,
+    validateInvoiceData,
+} from '../../lib/utils/validation'
 
 const StyledForm = styled.form`
     width: 100%;
@@ -68,7 +74,18 @@ const ActionBar = styled.section`
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     background-color: ${Colour.white};
 `
-const ItemsListGrid = styled.div`
+
+const ListItemGridWrapper = styled.div`
+    width: 100%;
+
+    & span.error {
+        font-size: 14px;
+        padding: 2px 8px;
+        color: ${Colour.danger};
+    }
+`
+
+const ListItemGrid = styled.div`
     width: 100%;
     display: grid;
     gap: 8px;
@@ -101,6 +118,7 @@ const ItemsListGrid = styled.div`
 const defaultItemListData = [
     {
         tempId: `${uuidv4()}`,
+        error: '',
         name: '',
         price: 0,
         quantity: 0,
@@ -110,6 +128,7 @@ const defaultItemListData = [
 
 export interface InvoiceFormProps {
     action: 'New' | 'Edit'
+    submitLoading: boolean
     invoiceData?: IInvoice
     onDiscard?(): void
     onSubmitNewInvoice?(inputData: IInvoiceInput): Promise<void>
@@ -117,6 +136,7 @@ export interface InvoiceFormProps {
 }
 
 const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
+    const [validSubmit, setValidSubmit] = useState<boolean>(true)
     const [textValues, setTextValues] = useState({
         marchantCountry: props?.invoiceData?.marchantCountry || '',
         marchantCity: props?.invoiceData?.marchantCity || '',
@@ -132,6 +152,20 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
             props?.invoiceData?.transactionDescription || '',
     })
 
+    const [textValueErrors, setTextValueErrors] = useState({
+        marchantStreetError: '',
+        marchantCityError: '',
+        marchantPostCodeError: '',
+        marchantCountryError: '',
+        clientNameError: '',
+        clientEmailError: '',
+        clientStreetError: '',
+        clientCityError: '',
+        clientPostCodeError: '',
+        clientCountryError: '',
+        transactionDescriptionError: '',
+    })
+
     const [itemListData, setItemListData] = useState<ILabeledInvoiceItem[]>(
         props?.invoiceData?.itemList?.map((itm) => {
             return {
@@ -140,6 +174,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                 quantity: itm.quantity,
                 total: itm.total,
                 tempId: `${uuidv4()}`,
+                error: '',
             }
         }) || defaultItemListData
     )
@@ -215,6 +250,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                             type="text"
                             name="marchantCountry"
                             value={textValues.marchantCountry}
+                            error={textValueErrors.marchantCountryError}
                             label="Country"
                             required
                         />
@@ -225,6 +261,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                             type="text"
                             name="marchantCity"
                             value={textValues.marchantCity}
+                            error={textValueErrors.marchantCityError}
                             label="City"
                             required
                         />
@@ -235,6 +272,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                             type="text"
                             name="marchantPostCode"
                             value={textValues.marchantPostCode}
+                            error={textValueErrors.marchantPostCodeError}
                             label="Post Code"
                             required
                         />
@@ -246,6 +284,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                         type="text"
                         name="marchantStreet"
                         value={textValues.marchantStreet}
+                        error={textValueErrors.marchantStreetError}
                         label="Street Address"
                         required
                     />
@@ -265,6 +304,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                         type="text"
                         name="clientName"
                         value={textValues.clientName}
+                        error={textValueErrors.clientNameError}
                         label="Client's Name"
                         required
                     />
@@ -275,6 +315,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                         type="text"
                         name="clientEmail"
                         value={textValues.clientEmail}
+                        error={textValueErrors.clientEmailError}
                         label="Client's Email"
                         required
                     />
@@ -286,6 +327,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                             type="text"
                             name="clientCountry"
                             value={textValues.clientCountry}
+                            error={textValueErrors.clientCountryError}
                             label="Country"
                             required
                         />
@@ -296,6 +338,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                             type="text"
                             name="clientCity"
                             value={textValues.clientCity}
+                            error={textValueErrors.clientCityError}
                             label="City"
                             required
                         />
@@ -306,6 +349,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                             type="text"
                             name="clientPostCode"
                             value={textValues.clientPostCode}
+                            error={textValueErrors.clientPostCodeError}
                             label="Post Code"
                             required
                         />
@@ -317,6 +361,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                         type="text"
                         name="clientStreet"
                         value={textValues.clientStreet}
+                        error={textValueErrors.clientStreetError}
                         label="Street Address"
                         required
                     />
@@ -353,6 +398,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                     <Input
                         name="transactionDescription"
                         value={textValues.transactionDescription}
+                        error={textValueErrors.transactionDescriptionError}
                         onChange={onTextValueChange}
                         label="Transaction Description"
                         placeholder="Transaction Description"
@@ -369,7 +415,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                     Item List
                 </H1>
 
-                <ItemsListGrid className="py-4">
+                <ListItemGrid className="py-4">
                     <Text className="name text-sm">
                         Name <span className="md:hidden"> - </span>
                     </Text>
@@ -379,7 +425,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                     <Text className="price text-sm md:text-center">Price</Text>
                     <Text className="total text-sm text-center">Total</Text>
                     <Text className="action"></Text>
-                </ItemsListGrid>
+                </ListItemGrid>
 
                 {itemListData.map((item) => {
                     function onItemChange(
@@ -391,52 +437,55 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                         onDeleteInvoiceListItem(item.tempId)
                     }
                     return (
-                        <ItemsListGrid key={item.tempId} className="py-2">
-                            <div className="name">
-                                <Input
-                                    value={item.name}
-                                    name="name"
-                                    onChange={onItemChange}
-                                    required
-                                    placeholder="Item Name"
-                                />
-                            </div>
-                            <div className="qty">
-                                <Input
-                                    value={item.quantity}
-                                    name="quantity"
-                                    type="number"
-                                    onChange={onItemChange}
-                                    required
-                                    placeholder="Qty"
-                                />
-                            </div>
-                            <div className="price">
-                                <Input
-                                    value={item.price}
-                                    name="price"
-                                    type="number"
-                                    onChange={onItemChange}
-                                    required
-                                    placeholder="Price"
-                                />
-                            </div>
-                            <div className="total flex items-center justify-center">
-                                <Text>{item.total || '--------'}</Text>
-                            </div>
-                            <div
-                                className={`action pt-2 md:pt-0 flex md:items-center justify-center ${
-                                    itemListData.length > 1
-                                        ? 'cursor-pointer'
-                                        : 'cursor-not-allowed'
-                                }`}
-                            >
-                                <FontAwesomeIcon
-                                    onClick={onDeleteItem}
-                                    icon={faTrashAlt}
-                                />
-                            </div>
-                        </ItemsListGrid>
+                        <ListItemGridWrapper key={item.tempId}>
+                            <ListItemGrid className="py-2">
+                                <div className="name">
+                                    <Input
+                                        value={item.name}
+                                        name="name"
+                                        onChange={onItemChange}
+                                        required
+                                        placeholder="Item Name"
+                                    />
+                                </div>
+                                <div className="qty">
+                                    <Input
+                                        value={item.quantity}
+                                        name="quantity"
+                                        type="number"
+                                        onChange={onItemChange}
+                                        required
+                                        placeholder="Qty"
+                                    />
+                                </div>
+                                <div className="price">
+                                    <Input
+                                        value={item.price}
+                                        name="price"
+                                        type="number"
+                                        onChange={onItemChange}
+                                        required
+                                        placeholder="Price"
+                                    />
+                                </div>
+                                <div className="total flex items-center justify-center">
+                                    <Text>{item.total || '--------'}</Text>
+                                </div>
+                                <div
+                                    className={`action pt-2 md:pt-0 flex md:items-center justify-center ${
+                                        itemListData.length > 1
+                                            ? 'cursor-pointer'
+                                            : 'cursor-not-allowed'
+                                    }`}
+                                >
+                                    <FontAwesomeIcon
+                                        onClick={onDeleteItem}
+                                        icon={faTrashAlt}
+                                    />
+                                </div>
+                            </ListItemGrid>
+                            <span className="error">{item.error}</span>
+                        </ListItemGridWrapper>
                     )
                 })}
                 <Button
@@ -451,7 +500,17 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
             {props.action === 'New' && (
                 <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
                     <Button onClick={onSaveInvoice} type="button" size="small">
-                        Save
+                        {props.submitLoading &&
+                        status === IInvoiceStatus.DRAFT ? (
+                            <span className="inline-block px-4">
+                                <FontAwesomeIcon
+                                    icon={faSpinner}
+                                    className="fa-spin"
+                                />
+                            </span>
+                        ) : (
+                            'Save'
+                        )}
                     </Button>
                     <span className="px-2" />
                     <Button
@@ -469,7 +528,17 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                         size="small"
                         primary
                     >
-                        Submit
+                        {props.submitLoading &&
+                        status === IInvoiceStatus.PENDING ? (
+                            <span className="inline-block px-4">
+                                <FontAwesomeIcon
+                                    icon={faSpinner}
+                                    className="fa-spin"
+                                />
+                            </span>
+                        ) : (
+                            'Submit'
+                        )}
                     </Button>
                 </ActionBar>
             )}
@@ -490,7 +559,16 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                         size="small"
                         primary
                     >
-                        Save Changes
+                        {props.submitLoading ? (
+                            <span className="inline-block px-4">
+                                <FontAwesomeIcon
+                                    icon={faSpinner}
+                                    className="fa-spin"
+                                />
+                            </span>
+                        ) : (
+                            'Save Changes'
+                        )}
                     </Button>
                 </ActionBar>
             )}
@@ -498,10 +576,30 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
     )
 
     function onTextValueChange(event: ChangeEvent<HTMLInputElement>) {
+        const name = event.target.name
+        const value = event.target.value
         setTextValues({
             ...textValues,
-            [event.target.name]: event.target.value,
+            [name]: value,
         })
+        if (!validSubmit) {
+            if (isEmpty(value) || isInvalidString(value)) {
+                setTextValueErrors({
+                    ...textValueErrors,
+                    [`${name}Error`]: 'this field is required',
+                })
+            } else if (name.endsWith('Email') && isEmailInvalid(value)) {
+                setTextValueErrors({
+                    ...textValueErrors,
+                    [`${name}Error`]: 'invalid email format',
+                })
+            } else {
+                setTextValueErrors({
+                    ...textValueErrors,
+                    [`${name}Error`]: '',
+                })
+            }
+        }
     }
 
     function onInvoiceDateChange(value: Date) {
@@ -533,6 +631,25 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                                   : fieldName === 'quantity'
                                   ? item.price * Number(fieldValue)
                                   : item.total,
+                          error: validSubmit
+                              ? ''
+                              : fieldName === 'name'
+                              ? isEmpty(fieldValue as string) ||
+                                !Number(item.price) ||
+                                !Number(item.quantity)
+                                  ? 'invalid item entry'
+                                  : ''
+                              : fieldName === 'price'
+                              ? isEmpty(item.name) ||
+                                !Number(fieldValue) ||
+                                !Number(item.quantity)
+                                  ? 'invalid item entry'
+                                  : ''
+                              : isEmpty(item.name) ||
+                                !Number(fieldValue) ||
+                                !Number(item.price)
+                              ? 'invalid item entry'
+                              : '',
                       }
                     : item
             )
@@ -544,6 +661,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
             ...itemListData,
             {
                 tempId: `${uuidv4()}`,
+                error: '',
                 name: '',
                 price: 0,
                 quantity: 0,
@@ -558,31 +676,44 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
         }
     }
 
-    function getSubmittedData(): IInvoiceInput {
-        const itemList = itemListData.map((item) => ({
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            total: item.total,
-        }))
+    function getSubmittedData(): IInvoiceInput | void {
+        const {
+            isValid,
+            validatedItemList,
+            ...errorResults
+        } = validateInvoiceData(textValues, itemListData)
+        setValidSubmit(isValid)
+        if (isValid) {
+            const itemList = itemListData.map((item) => ({
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                total: item.total,
+            }))
 
-        return {
-            ...textValues,
-            invoiceDate,
-            paymentTerms,
-            status,
-            itemList,
-            totalAmount: itemListData.reduce(
-                (prev, curr) => prev + curr.total,
-                0
-            ),
+            return {
+                ...textValues,
+                invoiceDate,
+                paymentTerms,
+                status,
+                itemList,
+                totalAmount: itemListData.reduce(
+                    (prev, curr) => prev + curr.total,
+                    0
+                ),
+            }
+        } else {
+            setTextValueErrors(errorResults)
+            setItemListData(validatedItemList)
         }
     }
 
     async function onSaveInvoice() {
         if (props.onSubmitNewInvoice) {
             const invoiceInput = getSubmittedData()
-            await props.onSubmitNewInvoice(invoiceInput)
+            if (invoiceInput) {
+                await props.onSubmitNewInvoice(invoiceInput)
+            }
         }
     }
 
@@ -594,10 +725,12 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
     async function onSaveInvoiceChanges() {
         if (props.invoiceData && props.onSubmitInvoiceUpdate) {
             const invoiceInput = getSubmittedData()
-            await props.onSubmitInvoiceUpdate(
-                invoiceInput,
-                props.invoiceData.id
-            )
+            if (invoiceInput) {
+                await props.onSubmitInvoiceUpdate(
+                    invoiceInput,
+                    props.invoiceData.id
+                )
+            }
         }
     }
 }

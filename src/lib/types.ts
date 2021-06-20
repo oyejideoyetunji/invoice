@@ -51,6 +51,7 @@ export interface IInvoiceItem {
 }
 
 export interface ILabeledInvoiceItem {
+    error: string
     tempId: string
     name: string
     price: number
@@ -69,9 +70,9 @@ export interface IInvoiceInput {
     clientCity: string
     clientPostCode: string
     clientCountry: string
+    transactionDescription: string
     invoiceDate: Date
     paymentTerms: Date
-    transactionDescription: string
     totalAmount: number
     status: IInvoiceStatus
     itemList: IInvoiceItemInput[]
@@ -127,7 +128,7 @@ export interface Option<T> {
     value: T
 }
 
-export enum EInvoiceInput {
+export enum EInvoiceValidationInput {
     marchantStreet = 'marchantStreet',
     marchantCity = 'marchantCity',
     marchantPostCode = 'marchantPostCode',
@@ -138,10 +139,19 @@ export enum EInvoiceInput {
     clientCity = 'clientCity',
     clientPostCode = 'clientPostCode',
     clientCountry = 'clientCountry',
-    invoiceDate = 'invoiceDate',
-    paymentTerms = 'paymentTerms',
     transactionDescription = 'transactionDescription',
-    totalAmount = 'totalAmount',
-    status = 'status',
-    itemList = 'itemList',
+}
+
+export enum EInvoiceValidationResults {
+    marchantStreetError = 'marchantStreetError',
+    marchantCityError = 'marchantCityError',
+    marchantPostCodeError = 'marchantPostCodeError',
+    marchantCountryError = 'marchantCountryError',
+    clientNameError = 'clientNameError',
+    clientEmailError = 'clientEmailError',
+    clientStreetError = 'clientStreetError',
+    clientCityError = 'clientCityError',
+    clientPostCodeError = 'clientPostCodeError',
+    clientCountryError = 'clientCountryError',
+    transactionDescriptionError = 'transactionDescriptionError',
 }

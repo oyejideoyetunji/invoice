@@ -186,6 +186,7 @@ const StatusWrapper = styled.section`
 `
 
 const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
+    const [submitLoading, setSubmitLoading] = useState<boolean>(false)
     const [showInvoiceForm, setShowInvoiceForm] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
     const [invoices, setInvoices] = useState<IInvoice[]>()
@@ -354,6 +355,7 @@ const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                             </CloseModalButtonWrapper>
                         </div>
                         <InvoiceForm
+                            submitLoading={submitLoading}
                             onDiscard={onCloseInvoiceForm}
                             action="New"
                             onSubmitNewInvoice={onSubmitNewInvoice}
@@ -371,14 +373,17 @@ const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         setShowInvoiceForm(false)
     }
     async function onSubmitNewInvoice(inputData: IInvoiceInput) {
+        setSubmitLoading(true)
         const invoiceData = await CreateInvoiceService(inputData)
         if (invoiceData && invoiceData.id) {
+            setSubmitLoading(false)
             const invoicesData = await ReadAllInvoiceService()
             if (invoicesData && invoicesData.length) {
                 onCloseInvoiceForm()
                 setInvoices(invoicesData)
             }
         } else if (invoiceData && invoiceData.message) {
+            setSubmitLoading(false)
             console.log(invoiceData)
         }
     }
