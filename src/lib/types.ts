@@ -74,6 +74,7 @@ export interface IInvoiceInput {
     invoiceDate: Date
     paymentTerms: Date
     totalAmount: number
+    archivedAt?: Date
     status: IInvoiceStatus
     itemList: IInvoiceItemInput[]
 }
