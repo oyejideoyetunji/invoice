@@ -27,6 +27,10 @@ const Button = styled.button<ButtonProps>`
         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     }
 
+    &:disabled {
+        cursor: not-allowed;
+    }
+
     ${({ primary, color }) =>
         primary
             ? `
