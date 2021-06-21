@@ -115,6 +115,13 @@ const ListItemGrid = styled.div`
     }
 `
 
+const StatusWrapper = styled.section`
+    margin: 16px 0;
+    padding: 16px;
+    height: calc(70vh);
+    color: ${Colour.primaryBlue};
+`
+
 const defaultItemListData = [
     {
         tempId: `${uuidv4()}`,
@@ -229,350 +236,369 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
     )
 
     return (
-        <StyledForm className="relative">
-            <div className="w-full px-4 sm:px-8 pb-24">
-                <h1 className="pb-4 text-xl sm:text-2xl md:text-4xl leading-snug md:leading-normal">
-                    {props.action} Invoice
-                </h1>
+        <>
+            <StyledForm className="relative">
+                <div className="w-full px-4 sm:px-8 pb-24">
+                    <h1 className="pb-4 text-xl sm:text-2xl md:text-4xl leading-snug md:leading-normal">
+                        {props.action} Invoice
+                    </h1>
 
-                <H1
-                    className="py-4"
-                    fontSize="16px"
-                    fontWeight="600"
-                    color={Colour.purpleBlue}
-                >
-                    Bill From
-                </H1>
-                <div className="flex flex-wrap justify-between">
-                    <div className="w-100p md-w-30p py-2">
+                    <H1
+                        className="py-4"
+                        fontSize="16px"
+                        fontWeight="600"
+                        color={Colour.purpleBlue}
+                    >
+                        Bill From
+                    </H1>
+                    <div className="flex flex-wrap justify-between">
+                        <div className="w-100p md-w-30p py-2">
+                            <Input
+                                onChange={onTextValueChange}
+                                type="text"
+                                name="marchantCountry"
+                                value={textValues.marchantCountry}
+                                error={textValueErrors.marchantCountryError}
+                                label="Country"
+                                required
+                            />
+                        </div>
+                        <div className="w-45p md-w-30p py-2">
+                            <Input
+                                onChange={onTextValueChange}
+                                type="text"
+                                name="marchantCity"
+                                value={textValues.marchantCity}
+                                error={textValueErrors.marchantCityError}
+                                label="City"
+                                required
+                            />
+                        </div>
+                        <div className="w-45p md-w-30p py-2">
+                            <Input
+                                onChange={onTextValueChange}
+                                type="text"
+                                name="marchantPostCode"
+                                value={textValues.marchantPostCode}
+                                error={textValueErrors.marchantPostCodeError}
+                                label="Post Code"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div className="py-2">
                         <Input
                             onChange={onTextValueChange}
                             type="text"
-                            name="marchantCountry"
-                            value={textValues.marchantCountry}
-                            error={textValueErrors.marchantCountryError}
-                            label="Country"
+                            name="marchantStreet"
+                            value={textValues.marchantStreet}
+                            error={textValueErrors.marchantStreetError}
+                            label="Street Address"
                             required
                         />
                     </div>
-                    <div className="w-45p md-w-30p py-2">
-                        <Input
-                            onChange={onTextValueChange}
-                            type="text"
-                            name="marchantCity"
-                            value={textValues.marchantCity}
-                            error={textValueErrors.marchantCityError}
-                            label="City"
-                            required
-                        />
-                    </div>
-                    <div className="w-45p md-w-30p py-2">
-                        <Input
-                            onChange={onTextValueChange}
-                            type="text"
-                            name="marchantPostCode"
-                            value={textValues.marchantPostCode}
-                            error={textValueErrors.marchantPostCodeError}
-                            label="Post Code"
-                            required
-                        />
-                    </div>
-                </div>
-                <div className="py-2">
-                    <Input
-                        onChange={onTextValueChange}
-                        type="text"
-                        name="marchantStreet"
-                        value={textValues.marchantStreet}
-                        error={textValueErrors.marchantStreetError}
-                        label="Street Address"
-                        required
-                    />
-                </div>
 
-                <H1
-                    className="py-4"
-                    fontSize="16px"
-                    fontWeight="600"
-                    color={Colour.purpleBlue}
-                >
-                    Bill To
-                </H1>
-                <div className="py-2">
-                    <Input
-                        onChange={onTextValueChange}
-                        type="text"
-                        name="clientName"
-                        value={textValues.clientName}
-                        error={textValueErrors.clientNameError}
-                        label="Client's Name"
-                        required
-                    />
-                </div>
-                <div className="py-2">
-                    <Input
-                        onChange={onTextValueChange}
-                        type="text"
-                        name="clientEmail"
-                        value={textValues.clientEmail}
-                        error={textValueErrors.clientEmailError}
-                        label="Client's Email"
-                        required
-                    />
-                </div>
-                <div className="flex flex-wrap justify-between">
-                    <div className="w-100p md-w-30p py-2">
+                    <H1
+                        className="py-4"
+                        fontSize="16px"
+                        fontWeight="600"
+                        color={Colour.purpleBlue}
+                    >
+                        Bill To
+                    </H1>
+                    <div className="py-2">
                         <Input
                             onChange={onTextValueChange}
                             type="text"
-                            name="clientCountry"
-                            value={textValues.clientCountry}
-                            error={textValueErrors.clientCountryError}
-                            label="Country"
+                            name="clientName"
+                            value={textValues.clientName}
+                            error={textValueErrors.clientNameError}
+                            label="Client's Name"
                             required
                         />
                     </div>
-                    <div className="w-45p md-w-30p py-2">
+                    <div className="py-2">
                         <Input
                             onChange={onTextValueChange}
                             type="text"
-                            name="clientCity"
-                            value={textValues.clientCity}
-                            error={textValueErrors.clientCityError}
-                            label="City"
+                            name="clientEmail"
+                            value={textValues.clientEmail}
+                            error={textValueErrors.clientEmailError}
+                            label="Client's Email"
                             required
                         />
                     </div>
-                    <div className="w-45p md-w-30p py-2">
+                    <div className="flex flex-wrap justify-between">
+                        <div className="w-100p md-w-30p py-2">
+                            <Input
+                                onChange={onTextValueChange}
+                                type="text"
+                                name="clientCountry"
+                                value={textValues.clientCountry}
+                                error={textValueErrors.clientCountryError}
+                                label="Country"
+                                required
+                            />
+                        </div>
+                        <div className="w-45p md-w-30p py-2">
+                            <Input
+                                onChange={onTextValueChange}
+                                type="text"
+                                name="clientCity"
+                                value={textValues.clientCity}
+                                error={textValueErrors.clientCityError}
+                                label="City"
+                                required
+                            />
+                        </div>
+                        <div className="w-45p md-w-30p py-2">
+                            <Input
+                                onChange={onTextValueChange}
+                                type="text"
+                                name="clientPostCode"
+                                value={textValues.clientPostCode}
+                                error={textValueErrors.clientPostCodeError}
+                                label="Post Code"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div className="py-2">
                         <Input
                             onChange={onTextValueChange}
                             type="text"
-                            name="clientPostCode"
-                            value={textValues.clientPostCode}
-                            error={textValueErrors.clientPostCodeError}
-                            label="Post Code"
+                            name="clientStreet"
+                            value={textValues.clientStreet}
+                            error={textValueErrors.clientStreetError}
+                            label="Street Address"
                             required
                         />
                     </div>
-                </div>
-                <div className="py-2">
-                    <Input
-                        onChange={onTextValueChange}
-                        type="text"
-                        name="clientStreet"
-                        value={textValues.clientStreet}
-                        error={textValueErrors.clientStreetError}
-                        label="Street Address"
-                        required
-                    />
-                </div>
 
-                <div className="flex flex-wrap justify-between pt-6">
-                    <div className="w-100p md-w-45p py-2">
-                        <Calendar
-                            onChange={onInvoiceDateChange}
-                            value={invoiceDate}
-                            label="Invoice Date"
+                    <div className="flex flex-wrap justify-between pt-6">
+                        <div className="w-100p md-w-45p py-2">
+                            <Calendar
+                                onChange={onInvoiceDateChange}
+                                value={invoiceDate}
+                                label="Invoice Date"
+                            />
+                        </div>
+                        <div className="w-100p md-w-45p py-2">
+                            <Select
+                                value={paymentTerms.toLocaleDateString()}
+                                label="Payment Terms"
+                                onChange={onPaymentTermsChange}
+                                required
+                            >
+                                {paymentTermsOptions.map((itm) => (
+                                    <option
+                                        key={itm.label}
+                                        value={itm.value.toLocaleDateString()}
+                                    >
+                                        {itm.label}
+                                    </option>
+                                ))}
+                            </Select>
+                        </div>
+                    </div>
+
+                    <div className="py-2">
+                        <Input
+                            name="transactionDescription"
+                            value={textValues.transactionDescription}
+                            error={textValueErrors.transactionDescriptionError}
+                            onChange={onTextValueChange}
+                            label="Transaction Description"
+                            placeholder="Transaction Description"
+                            required
                         />
                     </div>
-                    <div className="w-100p md-w-45p py-2">
-                        <Select
-                            value={paymentTerms.toLocaleDateString()}
-                            label="Payment Terms"
-                            onChange={onPaymentTermsChange}
-                            required
+
+                    <H1
+                        className="py-4"
+                        fontSize="16px"
+                        fontWeight="600"
+                        color={Colour.purpleBlue}
+                    >
+                        Item List
+                    </H1>
+
+                    <ListItemGrid className="py-4">
+                        <Text className="name text-sm">
+                            Name <span className="md:hidden"> - </span>
+                        </Text>
+                        <Text className="qty text-sm text-center md:text-left">
+                            QTY <span className="md:hidden"> - </span>
+                        </Text>
+                        <Text className="price text-sm md:text-center">
+                            Price
+                        </Text>
+                        <Text className="total text-sm text-center">Total</Text>
+                        <Text className="action"></Text>
+                    </ListItemGrid>
+
+                    {itemListData.map((item) => {
+                        function onItemChange(
+                            event: ChangeEvent<HTMLInputElement>
+                        ) {
+                            onInvoiceItemInputChange(item.tempId, event)
+                        }
+                        function onDeleteItem() {
+                            onDeleteInvoiceListItem(item.tempId)
+                        }
+                        return (
+                            <ListItemGridWrapper key={item.tempId}>
+                                <ListItemGrid className="py-2">
+                                    <div className="name">
+                                        <Input
+                                            value={item.name}
+                                            name="name"
+                                            onChange={onItemChange}
+                                            required
+                                            placeholder="Item Name"
+                                        />
+                                    </div>
+                                    <div className="qty">
+                                        <Input
+                                            value={item.quantity}
+                                            name="quantity"
+                                            type="number"
+                                            onChange={onItemChange}
+                                            required
+                                            placeholder="Qty"
+                                        />
+                                    </div>
+                                    <div className="price">
+                                        <Input
+                                            value={item.price}
+                                            name="price"
+                                            type="number"
+                                            onChange={onItemChange}
+                                            required
+                                            placeholder="Price"
+                                        />
+                                    </div>
+                                    <div className="total flex items-center justify-center">
+                                        <Text>{item.total || '--------'}</Text>
+                                    </div>
+                                    <div
+                                        className={`action pt-2 md:pt-0 flex md:items-center justify-center ${
+                                            itemListData.length > 1
+                                                ? 'cursor-pointer'
+                                                : 'cursor-not-allowed'
+                                        }`}
+                                    >
+                                        <FontAwesomeIcon
+                                            onClick={onDeleteItem}
+                                            icon={faTrashAlt}
+                                        />
+                                    </div>
+                                </ListItemGrid>
+                                <span className="error">{item.error}</span>
+                            </ListItemGridWrapper>
+                        )
+                    })}
+                    <Button
+                        type="button"
+                        color={Colour.purpleBlue}
+                        className="w-full my-2"
+                        onClick={onAddNewInvoiceItem}
+                    >
+                        + Add New Item
+                    </Button>
+                </div>
+                {props.action === 'New' && (
+                    <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
+                        <Button
+                            onClick={onSaveInvoice}
+                            type="button"
+                            size="small"
                         >
-                            {paymentTermsOptions.map((itm) => (
-                                <option
-                                    key={itm.label}
-                                    value={itm.value.toLocaleDateString()}
-                                >
-                                    {itm.label}
-                                </option>
-                            ))}
-                        </Select>
-                    </div>
-                </div>
-
-                <div className="py-2">
-                    <Input
-                        name="transactionDescription"
-                        value={textValues.transactionDescription}
-                        error={textValueErrors.transactionDescriptionError}
-                        onChange={onTextValueChange}
-                        label="Transaction Description"
-                        placeholder="Transaction Description"
-                        required
-                    />
-                </div>
-
-                <H1
-                    className="py-4"
-                    fontSize="16px"
-                    fontWeight="600"
-                    color={Colour.purpleBlue}
-                >
-                    Item List
-                </H1>
-
-                <ListItemGrid className="py-4">
-                    <Text className="name text-sm">
-                        Name <span className="md:hidden"> - </span>
-                    </Text>
-                    <Text className="qty text-sm text-center md:text-left">
-                        QTY <span className="md:hidden"> - </span>
-                    </Text>
-                    <Text className="price text-sm md:text-center">Price</Text>
-                    <Text className="total text-sm text-center">Total</Text>
-                    <Text className="action"></Text>
-                </ListItemGrid>
-
-                {itemListData.map((item) => {
-                    function onItemChange(
-                        event: ChangeEvent<HTMLInputElement>
-                    ) {
-                        onInvoiceItemInputChange(item.tempId, event)
-                    }
-                    function onDeleteItem() {
-                        onDeleteInvoiceListItem(item.tempId)
-                    }
-                    return (
-                        <ListItemGridWrapper key={item.tempId}>
-                            <ListItemGrid className="py-2">
-                                <div className="name">
-                                    <Input
-                                        value={item.name}
-                                        name="name"
-                                        onChange={onItemChange}
-                                        required
-                                        placeholder="Item Name"
-                                    />
-                                </div>
-                                <div className="qty">
-                                    <Input
-                                        value={item.quantity}
-                                        name="quantity"
-                                        type="number"
-                                        onChange={onItemChange}
-                                        required
-                                        placeholder="Qty"
-                                    />
-                                </div>
-                                <div className="price">
-                                    <Input
-                                        value={item.price}
-                                        name="price"
-                                        type="number"
-                                        onChange={onItemChange}
-                                        required
-                                        placeholder="Price"
-                                    />
-                                </div>
-                                <div className="total flex items-center justify-center">
-                                    <Text>{item.total || '--------'}</Text>
-                                </div>
-                                <div
-                                    className={`action pt-2 md:pt-0 flex md:items-center justify-center ${
-                                        itemListData.length > 1
-                                            ? 'cursor-pointer'
-                                            : 'cursor-not-allowed'
-                                    }`}
-                                >
+                            {props.submitLoading &&
+                            status === IInvoiceStatus.DRAFT ? (
+                                <span className="inline-block px-4">
                                     <FontAwesomeIcon
-                                        onClick={onDeleteItem}
-                                        icon={faTrashAlt}
+                                        icon={faSpinner}
+                                        className="fa-spin"
                                     />
-                                </div>
-                            </ListItemGrid>
-                            <span className="error">{item.error}</span>
-                        </ListItemGridWrapper>
-                    )
-                })}
-                <Button
-                    type="button"
-                    color={Colour.purpleBlue}
-                    className="w-full my-2"
-                    onClick={onAddNewInvoiceItem}
-                >
-                    + Add New Item
-                </Button>
-            </div>
-            {props.action === 'New' && (
-                <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
-                    <Button onClick={onSaveInvoice} type="button" size="small">
-                        {props.submitLoading &&
-                        status === IInvoiceStatus.DRAFT ? (
-                            <span className="inline-block px-4">
-                                <FontAwesomeIcon
-                                    icon={faSpinner}
-                                    className="fa-spin"
-                                />
-                            </span>
-                        ) : (
-                            'Save'
-                        )}
-                    </Button>
-                    <span className="px-2" />
-                    <Button
-                        onClick={props.onDiscard}
-                        type="button"
-                        size="small"
-                        color={Colour.danger}
-                    >
-                        Discard
-                    </Button>
-                    <span className="px-2" />
-                    <Button
-                        onClick={onSaveInvoiceAsPending}
-                        type="button"
-                        size="small"
-                        primary
-                    >
-                        {props.submitLoading &&
-                        status === IInvoiceStatus.PENDING ? (
-                            <span className="inline-block px-4">
-                                <FontAwesomeIcon
-                                    icon={faSpinner}
-                                    className="fa-spin"
-                                />
-                            </span>
-                        ) : (
-                            'Submit'
-                        )}
-                    </Button>
-                </ActionBar>
+                                </span>
+                            ) : (
+                                'Save'
+                            )}
+                        </Button>
+                        <span className="px-2" />
+                        <Button
+                            onClick={props.onDiscard}
+                            type="button"
+                            size="small"
+                            color={Colour.danger}
+                        >
+                            Discard
+                        </Button>
+                        <span className="px-2" />
+                        <Button
+                            onClick={onSaveInvoiceAsPending}
+                            type="button"
+                            size="small"
+                            primary
+                        >
+                            {props.submitLoading &&
+                            status === IInvoiceStatus.PENDING ? (
+                                <span className="inline-block px-4">
+                                    <FontAwesomeIcon
+                                        icon={faSpinner}
+                                        className="fa-spin"
+                                    />
+                                </span>
+                            ) : (
+                                'Submit'
+                            )}
+                        </Button>
+                    </ActionBar>
+                )}
+                {props.action === 'Edit' && props?.invoiceData?.id && (
+                    <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
+                        <Button
+                            onClick={props.onDiscard}
+                            type="button"
+                            size="small"
+                            color={Colour.danger}
+                        >
+                            Cancel
+                        </Button>
+                        <span className="px-2" />
+                        <Button
+                            onClick={onSaveInvoiceChanges}
+                            type="button"
+                            size="small"
+                            primary
+                        >
+                            {props.submitLoading ? (
+                                <span className="inline-block px-4">
+                                    <FontAwesomeIcon
+                                        icon={faSpinner}
+                                        className="fa-spin"
+                                    />
+                                </span>
+                            ) : (
+                                'Save Changes'
+                            )}
+                        </Button>
+                    </ActionBar>
+                )}
+            </StyledForm>
+            {props.submitLoading && (
+                <div className="w-full sm:w-11/12 md:w-10/12 lg:w-9/12 xl:w-1/2 2xl:w-2/5 h-screen fixed top-0 left-0 flex items-center justify-center">
+                    <StatusWrapper className="w-full flex items-center justify-center">
+                        <FontAwesomeIcon
+                            size="4x"
+                            icon={faSpinner}
+                            className="fa-spin"
+                        />
+                    </StatusWrapper>
+                </div>
             )}
-            {props.action === 'Edit' && props?.invoiceData?.id && (
-                <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
-                    <Button
-                        onClick={props.onDiscard}
-                        type="button"
-                        size="small"
-                        color={Colour.danger}
-                    >
-                        Cancel
-                    </Button>
-                    <span className="px-2" />
-                    <Button
-                        onClick={onSaveInvoiceChanges}
-                        type="button"
-                        size="small"
-                        primary
-                    >
-                        {props.submitLoading ? (
-                            <span className="inline-block px-4">
-                                <FontAwesomeIcon
-                                    icon={faSpinner}
-                                    className="fa-spin"
-                                />
-                            </span>
-                        ) : (
-                            'Save Changes'
-                        )}
-                    </Button>
-                </ActionBar>
-            )}
-        </StyledForm>
+        </>
     )
 
     function onTextValueChange(event: ChangeEvent<HTMLInputElement>) {
