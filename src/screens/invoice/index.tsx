@@ -88,6 +88,16 @@ const FormWrapper = styled.section`
     height: 100vh;
     overflow-y: auto;
     background-color: ${Colour.white};
+
+    & span.error {
+        font-size: 16px;
+        padding: 2px 8px;
+        color: ${Colour.danger};
+
+        @media only screen and (min-width: 767px) {
+            font-size: 18px;
+        }
+    }
 `
 const CloseModalButtonWrapper = styled.span`
     width: fit-content;
@@ -95,15 +105,26 @@ const CloseModalButtonWrapper = styled.span`
     padding: 4px;
     cursor: pointer;
 `
-const StatusWrapper = styled.section`
+const StatusWrapper = styled.section<{ color: string }>`
     margin: 16px 0;
     padding: 16px;
     height: calc(70vh);
-    color: ${Colour.primaryBlue};
+    color: ${({ color }) => color};
+`
+const ErrorText = styled.span`
+    font-size: 16px;
+    padding: 2px 8px;
+    color: ${Colour.danger};
+
+    @media only screen and (min-width: 767px) {
+        font-size: 18px;
+    }
 `
 
 const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     const [submitLoading, setSubmitLoading] = useState<boolean>(false)
+    const [submitError, setSubmitError] = useState<string>('')
+    const [statusUpdateError, setStatusUpdateError] = useState<string>('')
     const [showInvoiceForm, setShowInvoiceForm] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
     const [invoice, setInvoice] = useState<IInvoice>()
@@ -116,10 +137,11 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         const getInvoice = async () => {
             setLoading(true)
             const invoiceData = await ReadInvoiceService(id)
-            if (isMounted && invoiceData?.id) {
+            if (isMounted) {
                 setInvoice(invoiceData)
                 setLoading(false)
             }
+            setLoading(false)
         }
         getInvoice()
 
@@ -140,15 +162,21 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                     <span>Go back</span>
                 </div>
                 {loading ? (
-                    <StatusWrapper className="w-full flex items-center justify-center">
+                    <StatusWrapper
+                        color={Colour.primaryBlue}
+                        className="w-full flex items-center justify-center"
+                    >
                         <FontAwesomeIcon
                             size="5x"
                             icon={faSpinner}
                             className="fa-spin"
                         />
                     </StatusWrapper>
-                ) : invoice && invoice.id ? (
+                ) : invoice && invoice?.id ? (
                     <>
+                        {statusUpdateError && (
+                            <ErrorText>{statusUpdateError}</ErrorText>
+                        )}
                         <ScreenCard className="flex p-6 justify-between my-4">
                             <div className="w-full md:w-auto flex items-center justify-between md:justify-start">
                                 <span className="pr-4">Status</span>
@@ -345,8 +373,11 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                         </MobileActionBar>
                     </>
                 ) : (
-                    <StatusWrapper className="w-full flex items-center justify-center">
-                        Oops! Invoice not found
+                    <StatusWrapper
+                        color={Colour.gray}
+                        className="w-full flex items-center justify-center text-xl text-center"
+                    >
+                        Sorry, Invoice not found
                     </StatusWrapper>
                 )}
             </Wrapper>
@@ -365,7 +396,13 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                                 <FontAwesomeIcon icon={faTimes} />
                             </CloseModalButtonWrapper>
                         </div>
+                        <div className="flex justify-center text-center">
+                            {submitError && (
+                                <span className="error">{submitError}</span>
+                            )}
+                        </div>
                         <InvoiceForm
+                            error={submitError}
                             submitLoading={submitLoading}
                             onDiscard={onCloseInvoiceForm}
                             action="Edit"
@@ -382,21 +419,25 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         setShowInvoiceForm(true)
     }
     function onCloseInvoiceForm() {
+        setSubmitError('')
         setShowInvoiceForm(false)
     }
     async function onSubmitInvoiceUpdate(
         inputData: IInvoiceInput,
         invoiceId: string
     ) {
+        setSubmitError('')
         setSubmitLoading(true)
         const invoiceData = await UpdateInvoiceService(inputData, invoiceId)
         if (invoiceData && invoiceData.id) {
             setSubmitLoading(false)
             onCloseInvoiceForm()
             setInvoice(invoiceData)
-        } else if (invoiceData && invoiceData.message) {
+        } else {
+            setSubmitError('Sorry Invoice update failed.')
             setSubmitLoading(false)
-            console.log(invoiceData)
+            if (invoiceData && invoiceData.message) {
+            }
         }
     }
     async function onMarkInvoiceAsPaid() {
@@ -409,8 +450,13 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
 
             if (invoiceData && invoiceData.id) {
                 setInvoice(invoiceData)
-            } else if (invoiceData && invoiceData.message) {
-                console.log(invoiceData)
+            } else {
+                setStatusUpdateError('Sorry, Invoice update to PAID failed')
+                setTimeout(function () {
+                    setStatusUpdateError('')
+                }, 5000)
+                if (invoiceData && invoiceData.message) {
+                }
             }
         }
     }
@@ -425,8 +471,13 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
 
             if (invoiceData && invoiceData.id) {
                 setInvoice(invoiceData)
-            } else if (invoiceData && invoiceData.message) {
-                console.log(invoiceData)
+            } else {
+                setStatusUpdateError('Sorry, Invoice update to PENDING failed')
+                setTimeout(function () {
+                    setStatusUpdateError('')
+                }, 5000)
+                if (invoiceData && invoiceData.message) {
+                }
             }
         }
     }

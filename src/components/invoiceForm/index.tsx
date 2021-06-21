@@ -121,6 +121,15 @@ const StatusWrapper = styled.section`
     height: calc(70vh);
     color: ${Colour.primaryBlue};
 `
+const ErrorText = styled.span`
+    font-size: 16px;
+    padding: 2px 8px;
+    color: ${Colour.danger};
+
+    @media only screen and (min-width: 767px) {
+        font-size: 18px;
+    }
+`
 
 const defaultItemListData = [
     {
@@ -138,6 +147,7 @@ export interface InvoiceFormProps {
     submitLoading: boolean
     invoiceData?: IInvoice
     onDiscard?(): void
+    error?: string
     onSubmitNewInvoice?(inputData: IInvoiceInput): Promise<void>
     onSubmitInvoiceUpdate?(inputData: IInvoiceInput, id: string): Promise<void>
 }
@@ -506,6 +516,9 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                     >
                         + Add New Item
                     </Button>
+                    {props.error && (
+                        <ErrorText className="py-12">{props.error}</ErrorText>
+                    )}
                 </div>
                 {props.action === 'New' && (
                     <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">

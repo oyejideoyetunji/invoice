@@ -7,6 +7,7 @@ export enum Colour {
     primaryText = '#111517',
     white = '#ffffff',
     dodgerBlue = '#0483ff',
+    gray = '#6E7C7C',
     lightGray = '#e6e3e3',
     danger = '#fd8a8a',
     whiteModalBackground = 'rgba(225, 225, 225, 0.4)',

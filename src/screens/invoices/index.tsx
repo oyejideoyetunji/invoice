@@ -165,6 +165,16 @@ const FormWrapper = styled.section`
     height: 100vh;
     overflow-y: auto;
     background-color: ${Colour.white};
+
+    & span.error {
+        font-size: 16px;
+        padding: 2px 8px;
+        color: ${Colour.danger};
+
+        @media only screen and (min-width: 767px) {
+            font-size: 18px;
+        }
+    }
 `
 const CloseModalButtonWrapper = styled.span`
     width: fit-content;
@@ -178,15 +188,16 @@ const IconWrapper = styled.span<{ size?: string }>`
     width: fit-content;
     height: fit-content;
 `
-const StatusWrapper = styled.section`
+const StatusWrapper = styled.section<{ color: string }>`
     margin: 16px 0;
     padding: 16px;
     height: calc(70vh);
-    color: ${Colour.primaryBlue};
+    color: ${({ color }) => color};
 `
 
 const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     const [submitLoading, setSubmitLoading] = useState<boolean>(false)
+    const [submitError, setSubmitError] = useState<string>('')
     const [showInvoiceForm, setShowInvoiceForm] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
     const [invoices, setInvoices] = useState<IInvoice[]>()
@@ -196,7 +207,7 @@ const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         const getAllInvoices = async () => {
             setLoading(true)
             const invoicesData = await ReadAllInvoiceService()
-            if (isMounted && invoicesData.length) {
+            if (isMounted) {
                 setInvoices(invoicesData)
                 setLoading(false)
             }
@@ -255,7 +266,10 @@ const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                 </TopBar>
 
                 {loading ? (
-                    <StatusWrapper className="w-full flex items-center justify-center">
+                    <StatusWrapper
+                        color={Colour.primaryBlue}
+                        className="w-full flex items-center justify-center"
+                    >
                         <FontAwesomeIcon
                             size="5x"
                             icon={faSpinner}
@@ -263,7 +277,7 @@ const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                         />
                     </StatusWrapper>
                 ) : invoices ? (
-                    invoices.length > 0 ? (
+                    invoices?.length > 0 ? (
                         <InvoiceListWrapper>
                             {invoices.map((invoice) => (
                                 <Link
@@ -327,14 +341,20 @@ const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                             ))}
                         </InvoiceListWrapper>
                     ) : (
-                        <StatusWrapper className="w-full flex items-center justify-center">
+                        <StatusWrapper
+                            color={Colour.gray}
+                            className="w-full flex items-center justify-center text-xl text-center"
+                        >
                             Guess you have no invoice at the moment, Your
                             invoices will be here
                         </StatusWrapper>
                     )
                 ) : (
-                    <StatusWrapper className="w-full flex items-center justify-center">
-                        Oops! An error occurred while loading your List of
+                    <StatusWrapper
+                        color={Colour.gray}
+                        className="w-full flex items-center justify-center text-xl text-center"
+                    >
+                        Sorry, An error occurred while loading your List of
                         invoices
                     </StatusWrapper>
                 )}
@@ -354,7 +374,13 @@ const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                                 <FontAwesomeIcon icon={faTimes} />
                             </CloseModalButtonWrapper>
                         </div>
+                        <div className="flex justify-center text-center">
+                            {submitError && (
+                                <span className="error">{submitError}</span>
+                            )}
+                        </div>
                         <InvoiceForm
+                            error={submitError}
                             submitLoading={submitLoading}
                             onDiscard={onCloseInvoiceForm}
                             action="New"
@@ -370,9 +396,11 @@ const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         setShowInvoiceForm(true)
     }
     function onCloseInvoiceForm() {
+        setSubmitError('')
         setShowInvoiceForm(false)
     }
     async function onSubmitNewInvoice(inputData: IInvoiceInput) {
+        setSubmitError('')
         setSubmitLoading(true)
         const invoiceData = await CreateInvoiceService(inputData)
         if (invoiceData && invoiceData.id) {
@@ -382,9 +410,11 @@ const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                 onCloseInvoiceForm()
                 setInvoices(invoicesData)
             }
-        } else if (invoiceData && invoiceData.message) {
+        } else {
+            setSubmitError('Sorry Invoice creation failed.')
             setSubmitLoading(false)
-            console.log(invoiceData)
+            if (invoiceData && invoiceData.message) {
+            }
         }
     }
 }
