@@ -18,7 +18,6 @@ import { ModalWrapper } from '../../components/modalWrapper'
 import InvoiceForm from '../../components/invoiceForm'
 import { IInvoice, IInvoiceInput, IInvoiceStatus } from '../../lib/types'
 import {
-    DeleteInvoiceService,
     ReadInvoiceService,
     UpdateInvoiceService,
 } from '../../services/request'
@@ -483,10 +482,23 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     }
 
     async function onDeleteInvoice() {
-        const data = await DeleteInvoiceService(id)
+        if (invoice) {
+            const inputData = { ...invoice, archivedAt: new Date() }
+            const invoiceData = await UpdateInvoiceService(
+                inputData,
+                invoice.id
+            )
 
-        if (data && data?.message) {
-            props.history.push('/')
+            if (invoiceData && invoiceData.id) {
+                props.history.push('/')
+            } else {
+                setStatusUpdateError('Sorry, Invoice update to PENDING failed')
+                setTimeout(function () {
+                    setStatusUpdateError('')
+                }, 5000)
+                if (invoiceData && invoiceData.message) {
+                }
+            }
         }
     }
 }
