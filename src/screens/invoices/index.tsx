@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Button from '../../components/button'
 import { Colour } from '../../lib/colour'
@@ -7,14 +7,20 @@ import {
     faChevronRight,
     faCircle,
     faPlusCircle,
+    faSpinner,
     faTimes,
 } from '@fortawesome/free-solid-svg-icons'
-import { Link } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { getUrlString, Routes } from '../../components/navigation/routes'
 import { ModalWrapper } from '../../components/modalWrapper'
 import InvoiceForm from '../../components/invoiceForm'
 import Badge, { getVariantColor } from '../../components/badge'
 import { Variant } from '../../lib/variants'
+import {
+    CreateInvoiceService,
+    ReadAllInvoiceService,
+} from '../../services/request'
+import { IInvoice, IInvoiceInput, IInvoiceStatus } from '../../lib/types'
 
 const Wrapper = styled.section`
     min-height: 100vh;
@@ -159,6 +165,16 @@ const FormWrapper = styled.section`
     height: 100vh;
     overflow-y: auto;
     background-color: ${Colour.white};
+
+    & span.error {
+        font-size: 16px;
+        padding: 2px 8px;
+        color: ${Colour.danger};
+
+        @media only screen and (min-width: 767px) {
+            font-size: 18px;
+        }
+    }
 `
 const CloseModalButtonWrapper = styled.span`
     width: fit-content;
@@ -172,9 +188,35 @@ const IconWrapper = styled.span<{ size?: string }>`
     width: fit-content;
     height: fit-content;
 `
+const StatusWrapper = styled.section<{ color: string }>`
+    margin: 16px 0;
+    padding: 16px;
+    height: calc(70vh);
+    color: ${({ color }) => color};
+`
 
-const Invoices: FC = () => {
+const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
+    const [submitLoading, setSubmitLoading] = useState<boolean>(false)
+    const [submitError, setSubmitError] = useState<string>('')
     const [showInvoiceForm, setShowInvoiceForm] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
+    const [invoices, setInvoices] = useState<IInvoice[]>()
+
+    useEffect(() => {
+        let isMounted = true
+        const getAllInvoices = async () => {
+            setLoading(true)
+            const invoicesData = await ReadAllInvoiceService()
+            if (isMounted) {
+                setInvoices(invoicesData)
+                setLoading(false)
+            }
+        }
+        getAllInvoices()
+        return () => {
+            isMounted = false
+        }
+    }, [])
 
     return (
         <>
@@ -185,12 +227,17 @@ const Invoices: FC = () => {
                             <h1 className="text-xl sm:text-2xl md:text-4xl leading-snug md:leading-normal">
                                 Invoices
                             </h1>
-                            <span className="hidden md:inline text-sm">
-                                There are 7 total invoices
-                            </span>
-                            <span className="md:hidden text-xs">
-                                7 total invoices
-                            </span>
+                            {invoices && invoices.length > 0 && (
+                                <>
+                                    <span className="hidden md:inline text-sm">
+                                        There are {invoices.length} total
+                                        invoices
+                                    </span>
+                                    <span className="md:hidden text-xs">
+                                        {invoices.length} total invoices
+                                    </span>
+                                </>
+                            )}
                         </div>
                         <div className="flex items-center">
                             <Button
@@ -218,63 +265,99 @@ const Invoices: FC = () => {
                     </div>
                 </TopBar>
 
-                <InvoiceListWrapper>
-                    {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(
-                        (itm) => (
-                            <Link
-                                to={`${getUrlString(Routes.Invoice)}XARTG012`}
-                                key={itm}
-                            >
-                                <InvoiceCardWrapper>
-                                    <span className="invoice-id text-sm md:text-base font-bold md:font-medium">
-                                        #XARTG012
-                                    </span>
-                                    <span className="invoice-date text-sm md:text-base font-light">
-                                        Due 19 Aug 2021
-                                    </span>
-                                    <span className="invoice-cus-name text-sm md:text-base font-light">
-                                        Alex Grim
-                                    </span>
-                                    <span className="invoice-amount text-base md:text-lg font-bold md:font-medium">
-                                        NGN5236
-                                    </span>
-                                    <div className="invoice-status">
-                                        <Badge
-                                            variantColor={getVariantColor(
-                                                parseInt(itm) % 3 === 0
-                                                    ? Variant.Warning
-                                                    : parseInt(itm) % 3 === 1
-                                                    ? Variant.Neutral
-                                                    : Variant.Success
-                                            )}
-                                        >
-                                            <IconWrapper
-                                                className="pr-1"
-                                                size="8px"
-                                            >
-                                                <FontAwesomeIcon
-                                                    icon={faCircle}
-                                                />
-                                            </IconWrapper>
-                                            <span className="text-sm">
-                                                {parseInt(itm) % 3 === 0
-                                                    ? 'Pending'
-                                                    : parseInt(itm) % 3 === 1
-                                                    ? 'Draft'
-                                                    : 'Paid'}
-                                            </span>
-                                        </Badge>
-                                        <span className="pl-4 cursor-pointer hidden md:inline-block">
-                                            <FontAwesomeIcon
-                                                icon={faChevronRight}
-                                            />
+                {loading ? (
+                    <StatusWrapper
+                        color={Colour.primaryBlue}
+                        className="w-full flex items-center justify-center"
+                    >
+                        <FontAwesomeIcon
+                            size="5x"
+                            icon={faSpinner}
+                            className="fa-spin"
+                        />
+                    </StatusWrapper>
+                ) : invoices ? (
+                    invoices?.length > 0 ? (
+                        <InvoiceListWrapper>
+                            {invoices.map((invoice) => (
+                                <Link
+                                    to={`${getUrlString(Routes.Invoice)}${
+                                        invoice.id
+                                    }`}
+                                    key={invoice.id}
+                                >
+                                    <InvoiceCardWrapper>
+                                        <span className="invoice-id text-sm md:text-base font-bold md:font-medium">
+                                            {invoice.invoiceNumber ||
+                                                '#XARTG012'}
                                         </span>
-                                    </div>
-                                </InvoiceCardWrapper>
-                            </Link>
-                        )
-                    )}
-                </InvoiceListWrapper>
+                                        <span className="invoice-date text-sm md:text-base font-light">
+                                            Due{' '}
+                                            {new Date(
+                                                invoice.paymentTerms
+                                            ).toLocaleDateString() ||
+                                                '19 Aug 2021'}
+                                        </span>
+                                        <span className="invoice-cus-name text-sm md:text-base font-light">
+                                            {invoice.clientName || 'Alex Grim'}
+                                        </span>
+                                        <span className="invoice-amount text-base md:text-lg font-bold md:font-medium">
+                                            {`NGN${
+                                                invoice.totalAmount || 'NGN5236'
+                                            }`}
+                                        </span>
+                                        <div className="invoice-status">
+                                            <Badge
+                                                variantColor={getVariantColor(
+                                                    invoice.status ===
+                                                        IInvoiceStatus.PENDING
+                                                        ? Variant.Warning
+                                                        : invoice.status ===
+                                                          IInvoiceStatus.DRAFT
+                                                        ? Variant.Neutral
+                                                        : Variant.Success
+                                                )}
+                                            >
+                                                <IconWrapper
+                                                    className="pr-1"
+                                                    size="8px"
+                                                >
+                                                    <FontAwesomeIcon
+                                                        icon={faCircle}
+                                                    />
+                                                </IconWrapper>
+                                                <span className="text-sm">
+                                                    {invoice.status.toUpperCase()}
+                                                </span>
+                                            </Badge>
+                                            <span className="pl-4 cursor-pointer hidden md:inline-block">
+                                                <FontAwesomeIcon
+                                                    icon={faChevronRight}
+                                                />
+                                            </span>
+                                        </div>
+                                    </InvoiceCardWrapper>
+                                </Link>
+                            ))}
+                        </InvoiceListWrapper>
+                    ) : (
+                        <StatusWrapper
+                            color={Colour.gray}
+                            className="w-full flex items-center justify-center text-xl text-center"
+                        >
+                            Guess you have no invoice at the moment, Your
+                            invoices will be here
+                        </StatusWrapper>
+                    )
+                ) : (
+                    <StatusWrapper
+                        color={Colour.gray}
+                        className="w-full flex items-center justify-center text-xl text-center"
+                    >
+                        Sorry, An error occurred while loading your List of
+                        invoices
+                    </StatusWrapper>
+                )}
             </Wrapper>
             {showInvoiceForm && (
                 <ModalWrapper
@@ -291,7 +374,18 @@ const Invoices: FC = () => {
                                 <FontAwesomeIcon icon={faTimes} />
                             </CloseModalButtonWrapper>
                         </div>
-                        <InvoiceForm action="New" />
+                        <div className="flex justify-center text-center">
+                            {submitError && (
+                                <span className="error">{submitError}</span>
+                            )}
+                        </div>
+                        <InvoiceForm
+                            error={submitError}
+                            submitLoading={submitLoading}
+                            onDiscard={onCloseInvoiceForm}
+                            action="New"
+                            onSubmitNewInvoice={onSubmitNewInvoice}
+                        />
                     </FormWrapper>
                 </ModalWrapper>
             )}
@@ -302,7 +396,26 @@ const Invoices: FC = () => {
         setShowInvoiceForm(true)
     }
     function onCloseInvoiceForm() {
+        setSubmitError('')
         setShowInvoiceForm(false)
+    }
+    async function onSubmitNewInvoice(inputData: IInvoiceInput) {
+        setSubmitError('')
+        setSubmitLoading(true)
+        const invoiceData = await CreateInvoiceService(inputData)
+        if (invoiceData && invoiceData.id) {
+            setSubmitLoading(false)
+            const invoicesData = await ReadAllInvoiceService()
+            if (invoicesData && invoicesData.length) {
+                onCloseInvoiceForm()
+                setInvoices(invoicesData)
+            }
+        } else {
+            setSubmitError('Sorry Invoice creation failed.')
+            setSubmitLoading(false)
+            if (invoiceData && invoiceData.message) {
+            }
+        }
     }
 }
 

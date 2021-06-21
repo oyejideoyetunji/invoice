@@ -107,7 +107,12 @@ const LoginForm: FC<LoginFormProps> = (props: LoginFormProps) => {
                 required
             />
             <div className="w-full flex py-8 justify-end">
-                <Button size="medium" primary type="submit">
+                <Button
+                    size="medium"
+                    primary
+                    type="submit"
+                    disabled={props.loading}
+                >
                     {props.loading ? (
                         <span className="inline-block px-4">
                             <FontAwesomeIcon
