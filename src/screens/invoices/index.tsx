@@ -404,8 +404,8 @@ const Invoices: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         setSubmitLoading(true)
         const invoiceData = await CreateInvoiceService(inputData)
         if (invoiceData && invoiceData.id) {
-            setSubmitLoading(false)
             const invoicesData = await ReadAllInvoiceService()
+            setSubmitLoading(false)
             if (invoicesData && invoicesData.length) {
                 onCloseInvoiceForm()
                 setInvoices(invoicesData)
