@@ -248,7 +248,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
     return (
         <>
             <StyledForm className="relative">
-                <div className="w-full px-4 sm:px-8 pb-40">
+                <div className="w-full px-4 sm:px-8 pb-32">
                     <h1 className="pb-4 text-xl sm:text-2xl md:text-4xl leading-snug md:leading-normal">
                         {props.action} Invoice
                     </h1>
@@ -521,7 +521,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                     )}
                 </div>
                 {props.action === 'New' && (
-                    <ActionBar className="w-full flex items-center justify-end pt-6 pb-14 absolute bottom-0 left-0 right-0">
+                    <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
                         <Button
                             onClick={onSaveInvoice}
                             type="button"
@@ -570,7 +570,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                     </ActionBar>
                 )}
                 {props.action === 'Edit' && props?.invoiceData?.id && (
-                    <ActionBar className="w-full flex items-center justify-end px-2 pt-6 pb-14 absolute bottom-0 left-0 right-0">
+                    <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
                         <Button
                             onClick={props.onDiscard}
                             type="button"
