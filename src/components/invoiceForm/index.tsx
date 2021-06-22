@@ -248,7 +248,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
     return (
         <>
             <StyledForm className="relative">
-                <div className="w-full px-4 sm:px-8 pb-24">
+                <div className="w-full px-4 sm:px-8 pb-32">
                     <h1 className="pb-4 text-xl sm:text-2xl md:text-4xl leading-snug md:leading-normal">
                         {props.action} Invoice
                     </h1>
