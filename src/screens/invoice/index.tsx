@@ -358,17 +358,33 @@ const Invoice: FC<RouteComponentProps> = (props: RouteComponentProps) => {
                             </BalanceSheet>
                         </InvoiceDetailsCard>
                         <MobileActionBar className="action-bar md:hidden w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
-                            <Button onClick={onShowInvoiceForm} size="small">
-                                Edit
-                            </Button>
+                            {invoice.status === IInvoiceStatus.DRAFT && (
+                                <Button onClick={onShowInvoiceForm}>
+                                    Edit
+                                </Button>
+                            )}
                             <span className="px-2" />
-                            <Button size="small" color={Colour.danger}>
-                                Delete
-                            </Button>
+                            {invoice.status !== IInvoiceStatus.PENDING && (
+                                <Button
+                                    onClick={onDeleteInvoice}
+                                    color={Colour.danger}
+                                >
+                                    Delete
+                                </Button>
+                            )}
                             <span className="px-2" />
-                            <Button size="small" primary>
-                                Mark as paid
-                            </Button>
+                            {invoice.status === IInvoiceStatus.DRAFT ? (
+                                <Button
+                                    onClick={onMoveInvoiceToPending}
+                                    color={Colour.warningLight}
+                                >
+                                    Move to Pending
+                                </Button>
+                            ) : invoice.status === IInvoiceStatus.PENDING ? (
+                                <Button onClick={onMarkInvoiceAsPaid} primary>
+                                    Mark as paid
+                                </Button>
+                            ) : null}
                         </MobileActionBar>
                     </>
                 ) : (
