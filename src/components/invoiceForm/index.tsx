@@ -523,7 +523,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
                 {props.action === 'New' && (
                     <ActionBar className="w-full flex items-center justify-end px-2 py-6 absolute bottom-0 left-0 right-0">
                         <Button
-                            onClick={onSaveInvoice}
+                            onClick={onSaveInvoiceAsDraft}
                             type="button"
                             size="small"
                         >
@@ -715,7 +715,7 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
         }
     }
 
-    function getSubmittedData(): IInvoiceInput | void {
+    function getSubmittedData(status: IInvoiceStatus): IInvoiceInput | void {
         const {
             isValid,
             validatedItemList,
@@ -747,23 +747,27 @@ const InvoiceForm: FC<InvoiceFormProps> = (props: InvoiceFormProps) => {
         }
     }
 
-    async function onSaveInvoice() {
+    async function onSaveInvoice(status: IInvoiceStatus) {
         if (props.onSubmitNewInvoice) {
-            const invoiceInput = getSubmittedData()
+            const invoiceInput = getSubmittedData(status)
             if (invoiceInput) {
                 await props.onSubmitNewInvoice(invoiceInput)
             }
         }
     }
 
+    async function onSaveInvoiceAsDraft() {
+        await onSaveInvoice(IInvoiceStatus.DRAFT)
+    }
+
     async function onSaveInvoiceAsPending() {
         setInvoiceStatus(IInvoiceStatus.PENDING)
-        await onSaveInvoice()
+        await onSaveInvoice(IInvoiceStatus.PENDING)
     }
 
     async function onSaveInvoiceChanges() {
         if (props.invoiceData && props.onSubmitInvoiceUpdate) {
-            const invoiceInput = getSubmittedData()
+            const invoiceInput = getSubmittedData(props.invoiceData.status)
             if (invoiceInput) {
                 await props.onSubmitInvoiceUpdate(
                     invoiceInput,

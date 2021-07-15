@@ -65,14 +65,3 @@ export const Select: FC<
         </SelectWrapper>
     )
 }
-
-// export interface ControlledSelectProps {
-//     options: Option[]
-//     onChange(): void
-// }
-
-// export const ControlledSelect: FC<
-//     ControlledSelectProps & SelectComponentProps
-// > = (props: ControlledSelectProps & SelectComponentProps) => {
-//     return <Select></Select>
-// }
